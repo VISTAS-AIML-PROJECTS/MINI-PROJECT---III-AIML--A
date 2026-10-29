@@ -1,0 +1,233 @@
+import { useState, useMemo } from "react";
+import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL || 'https://campaign-budget-optimizer.onrender.com';
+import { CampaignContext } from "./campaignContextDef";
+import { productOptions, PLATFORM_COLORS } from "../constants/campaign";
+
+export function CampaignProvider({ children }) {
+  // Navigation state
+  const [activeView, setActiveView] = useState("dashboard");
+
+  // Campaign Configuration
+  const [campaignName, setCampaignName] = useState("Omnichannel Growth Q3");
+  const [productName, setProductName] = useState("Zoho");
+  const [market, setMarket] = useState("India");
+  const [industry, setIndustry] = useState("SaaS");
+  const [campaignType, setCampaignType] = useState("Search");
+  const [duration, setDuration] = useState("30");
+  const [revenueGoal, setRevenueGoal] = useState("75000");
+
+  // Budget and Real ML Results
+  const [budget, setBudget] = useState("25000");
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // What-If Analysis
+  const [whatIfBudget, setWhatIfBudget] = useState("35000");
+  const [whatIfResult, setWhatIfResult] = useState(null);
+  const [whatIfLoading, setWhatIfLoading] = useState(false);
+  const [whatIfError, setWhatIfError] = useState("");
+
+  // Market constraints
+  const minBudget = market === "India" ? 10000 : 15000;
+  const maxBudget = market === "India" ? 40000 : 60000;
+
+  const availablePlatforms = useMemo(() => {
+    return market === "India"
+      ? ["Google Ads", "Meta Ads"]
+      : ["Google Ads", "Meta Ads", "TikTok Ads"];
+  }, [market]);
+
+  // Market change handler
+  const handleMarketChange = (newMarket) => {
+    setMarket(newMarket);
+    setResult(null);
+    setWhatIfResult(null);
+    setError("");
+    setWhatIfError("");
+    if (newMarket === "India") {
+      setBudget((prev) => (Number(prev) > 40000 ? "30000" : prev || "25000"));
+      setWhatIfBudget((prev) => (Number(prev) > 40000 ? "35000" : prev || "35000"));
+    } else {
+      setBudget((prev) => (Number(prev) < 15000 ? "30000" : prev || "40000"));
+      setWhatIfBudget((prev) => (Number(prev) < 15000 ? "45000" : prev || "50000"));
+    }
+  };
+
+  // Industry change handler
+  const handleIndustryChange = (newIndustry) => {
+    setIndustry(newIndustry);
+    const available = productOptions[newIndustry] || [];
+    setProductName(available[0] || "");
+  };
+
+  // Execute primary ML optimization
+  const optimizeBudget = async (customBudget) => {
+    const targetBudget = customBudget !== undefined ? Number(customBudget) : Number(budget);
+
+    setError("");
+
+    if (!targetBudget || isNaN(targetBudget)) {
+      setError("Please enter a valid numeric budget.");
+      return false;
+    }
+
+    if (targetBudget < minBudget || targetBudget > maxBudget) {
+      setError(
+        `Please enter a budget between â‚¹${minBudget.toLocaleString("en-IN")} and â‚¹${maxBudget.toLocaleString("en-IN")} for ${market}.`
+      );
+      return false;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(`${API_URL}/optimize`, {
+        total_budget: targetBudget,
+        market: market,
+      });
+
+      setResult(response.data);
+      setWhatIfResult(null);
+      setWhatIfError("");
+      setLoading(false);
+      return true;
+    } catch (err) {
+      console.error("Optimization API error:", err);
+      const msg =
+        err.response?.data?.detail?.[0]?.msg ||
+        err.response?.data?.detail ||
+        (err.message === "Network Error"
+          ? "FastAPI backend is offline or unreachable on https://campaign-budget-optimizer.onrender.com. Start backend with 'uvicorn main:app --reload'."
+          : "Optimization request failed. Please check inputs and try again.");
+      setError(msg);
+      setLoading(false);
+      return false;
+    }
+  };
+
+  // Execute What-If simulation against the real ML API
+  const analyzeWhatIf = async () => {
+    const numericBudget = Number(whatIfBudget);
+    setWhatIfError("");
+
+    if (!whatIfBudget || isNaN(numericBudget)) {
+      setWhatIfError("Please enter a valid What-If budget.");
+      return;
+    }
+
+    if (numericBudget < minBudget || numericBudget > maxBudget) {
+      setWhatIfError(
+        `Please enter a budget between â‚¹${minBudget.toLocaleString("en-IN")} and â‚¹${maxBudget.toLocaleString("en-IN")} for ${market}.`
+      );
+      return;
+    }
+
+    setWhatIfLoading(true);
+
+    try {
+      const response = await axios.post(`${API_URL}/optimize`, {
+        total_budget: numericBudget,
+        market: market,
+      });
+
+      setWhatIfResult(response.data);
+      setWhatIfLoading(false);
+    } catch (err) {
+      console.error("What-If API error:", err);
+      const msg =
+        err.response?.data?.detail?.[0]?.msg ||
+        err.response?.data?.detail ||
+        (err.message === "Network Error"
+          ? "FastAPI backend is offline or unreachable on https://campaign-budget-optimizer.onrender.com."
+          : "What-If simulation request failed.");
+      setWhatIfError(msg);
+      setWhatIfLoading(false);
+    }
+  };
+
+  // Formatted chart datasets derived from authoritative ML results
+  const allocationData = useMemo(() => {
+    if (!result?.allocation) return [];
+    return Object.entries(result.allocation).map(([platform, amount]) => ({
+      platform,
+      shortName: platform.replace(" Ads", ""),
+      budget: Math.round(Number(amount)),
+      percentage: Math.round((Number(amount) / result.total_budget) * 100),
+      color: PLATFORM_COLORS[platform] || "#0d9488",
+    }));
+  }, [result]);
+
+  const revenueData = useMemo(() => {
+    if (!result?.predicted_revenue) return [];
+    return Object.entries(result.predicted_revenue).map(([platform, revenue]) => {
+      const allocated = result.allocation?.[platform] || 1;
+      const ratio = Number(revenue) / Number(allocated);
+      return {
+        platform,
+        shortName: platform.replace(" Ads", ""),
+        revenue: Math.round(Number(revenue)),
+        allocated: Math.round(Number(allocated)),
+        ratio: Number(ratio.toFixed(2)),
+        color: PLATFORM_COLORS[platform] || "#0d9488",
+      };
+    });
+  }, [result]);
+
+  // Revenue change between current plan and what-if plan
+  const revenueChange = useMemo(() => {
+    if (result && whatIfResult) {
+      return whatIfResult.total_predicted_revenue - result.total_predicted_revenue;
+    }
+    return 0;
+  }, [result, whatIfResult]);
+
+  const value = {
+    activeView,
+    setActiveView,
+    campaignName,
+    setCampaignName,
+    productName,
+    setProductName,
+    market,
+    setMarket: handleMarketChange,
+    industry,
+    setIndustry: handleIndustryChange,
+    campaignType,
+    setCampaignType,
+    duration,
+    setDuration,
+    revenueGoal,
+    setRevenueGoal,
+    budget,
+    setBudget,
+    result,
+    setResult,
+    loading,
+    error,
+    setError,
+    minBudget,
+    maxBudget,
+    availablePlatforms,
+    productOptions,
+    optimizeBudget,
+    whatIfBudget,
+    setWhatIfBudget,
+    whatIfResult,
+    whatIfLoading,
+    whatIfError,
+    analyzeWhatIf,
+    allocationData,
+    revenueData,
+    revenueChange,
+  };
+
+  return (
+    <CampaignContext.Provider value={value}>
+      {children}
+    </CampaignContext.Provider>
+  );
+}
+
+
