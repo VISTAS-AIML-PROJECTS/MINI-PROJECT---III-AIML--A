@@ -1,0 +1,270 @@
+#include <SPI.h>
+#include <LoRa.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// === CHANGE PER BOARD: 0 = Ambulance, 1 = J1, 2 = J2, 3 = J3 ===
+#define NODE_ID 1
+// ===============================================================
+
+#define LAST_NODE   3        // last junction in the chain
+#define LORA_FREQ   433E6
+#define VEHICLE_ID  "AMB01"
+
+#define LORA_SCK   18
+#define LORA_MISO  19
+#define LORA_MOSI  23
+#define LORA_SS    5
+#define LORA_RST   14
+#define LORA_DIO0  26
+
+#define PIN_RED     27
+#define PIN_YELLOW  33
+#define PIN_GREEN   32
+#define PIN_BUTTON  4
+#define PIN_BUZZER  15
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+const unsigned long GREEN_MS     = 5000;
+const unsigned long YELLOW_MS    = 2000;
+const unsigned long RED_MS       = 5000;
+const unsigned long CLEARANCE_MS = 2000;
+const unsigned long SEND_EVERY   = 500;
+const unsigned long EM_TIMEOUT   = 3000;
+
+enum Light { L_RED, L_YELLOW, L_GREEN };
+
+// Message "state" meaning:
+//   0 = emergency finished
+//   1 = ambulance is approaching J1 (nobody crossed yet)
+//   2 = ambulance has crossed J1
+//   3 = ambulance has crossed J2
+// Every junction passes each message on to the next junction right away,
+// so J2 and J3 are warned while the ambulance is still approaching J1.
+
+void showLCD(const String &l1, const String &l2) {
+  lcd.clear();
+  lcd.setCursor(0, 0); lcd.print(l1);
+  lcd.setCursor(0, 1); lcd.print(l2);
+}
+
+void sendPacket(unsigned long seq, int state) {
+  LoRa.beginPacket();
+  LoRa.print("EV,");
+  LoRa.print(VEHICLE_ID);
+  LoRa.print(",");
+  LoRa.print(seq);
+  LoRa.print(",");
+  LoRa.print(NODE_ID);
+  LoRa.print(",");
+  LoRa.print(state);
+  LoRa.endPacket();
+}
+
+void startLoRa() {
+  SPI.begin(LORA_SCK, LORA_MISO, LORA_MOSI, LORA_SS);
+  LoRa.setPins(LORA_SS, LORA_RST, LORA_DIO0);
+  if (!LoRa.begin(LORA_FREQ)) {
+    showLCD("LoRa ERROR", "check wiring");
+    while (true) delay(1000);
+  }
+}
+
+#if NODE_ID == 0
+// ======================= AMBULANCE =======================
+// Button presses:
+//   1st = ambulance approaching J1 (emergency ON)
+//   2nd = ambulance crossed J1
+//   3rd = ambulance crossed J2
+//   4th = ambulance crossed J3 (emergency OFF)
+int stage = 0;
+unsigned long seqNo = 0, lastSend = 0, lastPress = 0;
+bool lastBtn = HIGH;
+
+void showStage() {
+  if (stage == 0) {
+    showLCD("AMBULANCE " VEHICLE_ID, "Normal driving");
+  } else if (stage == 1) {
+    showLCD("AMB approaching J1", "EMERGENCY ON!");
+  } else {
+    showLCD("AMB crossed J" + String(stage - 1), "heading to J" + String(stage));
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(PIN_BUTTON, INPUT_PULLUP);
+  pinMode(PIN_BUZZER, OUTPUT);
+  Wire.begin(21, 22);
+  lcd.init(); lcd.backlight();
+  startLoRa();
+  showStage();
+}
+
+void loop() {
+  bool btn = digitalRead(PIN_BUTTON);
+  if (btn == LOW && lastBtn == HIGH && millis() - lastPress > 300) {
+    lastPress = millis();
+    stage = (stage + 1) % (LAST_NODE + 1);
+    showStage();
+    if (stage == 0) {
+      digitalWrite(PIN_BUZZER, LOW);
+      for (int i = 0; i < 3; i++) { sendPacket(++seqNo, 0); delay(250); }
+    } else {
+      sendPacket(++seqNo, stage);
+      lastSend = millis();
+    }
+  }
+  lastBtn = btn;
+
+  if (stage != 0) {
+    digitalWrite(PIN_BUZZER, (millis() / 250) % 2);
+    if (millis() - lastSend >= SEND_EVERY) {
+      lastSend = millis();
+      sendPacket(++seqNo, stage);
+      Serial.println("Sent packet");
+    }
+  }
+}
+
+#else
+// ======================= JUNCTION ========================
+Light light = L_GREEN;
+unsigned long lightStart = 0;
+bool emergencyActive = false;
+bool passed = false;               // ambulance already crossed me
+int curState = 1;                  // last alert state received (which junction the ambulance is heading to)
+int emStage = 0;
+unsigned long emStageStart = 0, lastMsgTime = 0;
+long lastSeq = -1;
+
+void setLight(Light l) {
+  light = l;
+  lightStart = millis();
+  digitalWrite(PIN_RED,    l == L_RED);
+  digitalWrite(PIN_YELLOW, l == L_YELLOW);
+  digitalWrite(PIN_GREEN,  l == L_GREEN);
+}
+
+String lightName() {
+  if (light == L_RED) return "RED";
+  if (light == L_YELLOW) return "YELLOW";
+  return "GREEN";
+}
+
+void showNormal() {
+  String top = passed ? ("AMB PASSED J" + String(NODE_ID))
+                      : ("JUNCTION " + String(NODE_ID));
+  showLCD(top, "Normal: " + lightName());
+}
+
+// Shows which junction the ambulance is near, and what this junction is doing
+void showEmergency() {
+  String l1;
+  if (curState >= NODE_ID) l1 = "J" + String(NODE_ID) + ": AMB ARRIVING";
+  else                     l1 = "J" + String(NODE_ID) + ": AMB NEAR J" + String(curState);
+  showLCD(l1, emStage == 2 ? "PRIORITY: GREEN" : "Preparing...");
+}
+
+void startEmergency() {
+  emergencyActive = true;
+  emStage = 0;
+  showEmergency();
+}
+
+void endEmergency() {
+  emergencyActive = false;
+  setLight(L_YELLOW);           // safe restore: yellow, then normal cycle
+  showNormal();
+}
+
+void handlePacket() {
+  int size = LoRa.parsePacket();
+  if (size == 0) return;
+
+  String msg = "";
+  while (LoRa.available()) msg += (char)LoRa.read();
+
+  char vid[12];
+  unsigned long seq;
+  int from, state;
+  if (sscanf(msg.c_str(), "EV,%11[^,],%lu,%d,%d", vid, &seq, &from, &state) != 4) return;
+  if (from != NODE_ID - 1) return;            // only listen to the node before me
+  if ((long)seq == lastSeq) return;
+  lastSeq = seq;
+  lastMsgTime = millis();
+
+  Serial.println("RX: " + msg);
+
+  // 1) Pass it on to the next junction straight away (the cascade)
+  if (NODE_ID < LAST_NODE) {
+    delay(50);
+    sendPacket(seq, state);
+  }
+
+  // 2) Decide what I should do
+  if (state == 0) {                           // finished
+    passed = false;
+    if (emergencyActive) endEmergency(); else showNormal();
+  }
+  else if (state - 1 < NODE_ID) {             // ambulance has NOT crossed me yet
+    bool changed = (state != curState);
+    curState = state;
+    if (!emergencyActive) startEmergency();
+    else if (changed) showEmergency();        // update the display
+  }
+  else {                                      // ambulance has crossed me
+    if (emergencyActive) { passed = true; endEmergency(); }
+    else if (!passed)    { passed = true; showNormal(); }
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(PIN_RED, OUTPUT);
+  pinMode(PIN_YELLOW, OUTPUT);
+  pinMode(PIN_GREEN, OUTPUT);
+  Wire.begin(21, 22);
+  lcd.init(); lcd.backlight();
+  setLight(L_GREEN);          // light first, so it turns on even if LoRa fails
+  startLoRa();
+  showNormal();
+}
+
+void loop() {
+  handlePacket();
+
+  // Lost contact -> restore normal
+  if ((emergencyActive || passed) && millis() - lastMsgTime > EM_TIMEOUT) {
+    passed = false;
+    if (emergencyActive) endEmergency(); else showNormal();
+  }
+
+  if (emergencyActive) {
+    if (emStage == 0) {
+      if (light == L_GREEN) {
+        emStage = 2;
+        showEmergency();
+      } else {
+        setLight(L_YELLOW);
+        emStage = 1;
+        emStageStart = millis();
+      }
+    } else if (emStage == 1 && millis() - emStageStart >= CLEARANCE_MS) {
+      setLight(L_GREEN);
+      emStage = 2;
+      showEmergency();
+    }
+    return;
+  }
+
+  unsigned long t = millis() - lightStart;
+  Light before = light;
+  if (light == L_GREEN  && t >= GREEN_MS)       setLight(L_YELLOW);
+  else if (light == L_YELLOW && t >= YELLOW_MS) setLight(L_RED);
+  else if (light == L_RED    && t >= RED_MS)    setLight(L_GREEN);
+  if (light != before) showNormal();
+}
+
+#endif
