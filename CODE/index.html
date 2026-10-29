@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bus Crowd Tracker</title>
+<style>
+:root{
+  --ink:#10222f; --muted:#5f7280; --bg:#eef3f6; --card:#fff; --line:#dbe4ea;
+  --brand:#0b4f6c; --brand-2:#0a3a50; --accent:#ffc233;
+  --low:#1e9e5a; --low-bg:#e2f5ea; --med:#d98200; --med-bg:#fff0d6; --high:#d63b3b; --high-bg:#fde4e4;
+}
+@media (prefers-color-scheme: dark){
+  :root{--ink:#e8f0f5; --muted:#93a8b6; --bg:#0c161d; --card:#14232d; --line:#24394a;
+    --low-bg:#123624; --med-bg:#3a2b0c; --high-bg:#3d1717;}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);display:flex;justify-content:center;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.app{width:100%;max-width:480px;min-height:100%;position:relative;padding-bottom:76px}
+
+.top{background:var(--brand);color:#fff;padding:18px 18px 56px;border-radius:0 0 28px 28px}
+.top h1{font-size:1.35rem;font-weight:700;letter-spacing:-.01em}
+.top p{opacity:.8;font-size:.88rem;margin-top:2px}
+.search{margin:-34px 16px 0;background:var(--card);border-radius:16px;box-shadow:0 6px 20px rgba(11,79,108,.18);padding:6px 14px;display:flex;align-items:center;gap:10px}
+.search svg{flex:none;color:var(--muted)}
+.search input{flex:1;border:0;background:none;font:inherit;color:var(--ink);padding:12px 0;outline:none}
+.chips{display:flex;gap:8px;padding:14px 16px 4px;overflow-x:auto}
+.chip{padding:7px 14px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-size:.85rem;white-space:nowrap}
+.chip[aria-pressed=true]{background:var(--brand);color:#fff;border-color:var(--brand)}
+h2{font-size:.95rem;font-weight:700;padding:16px 18px 8px}
+.list{padding:0 16px;display:grid;gap:10px}
+
+.hero{display:flex;align-items:center;gap:14px;width:calc(100% - 32px);margin:14px 16px 0;padding:14px 16px;border-radius:16px;background:var(--brand-2);color:#fff;text-align:left}
+.hero .l{font-size:.78rem;opacity:.8}.hero .m{font-weight:800;font-size:1.25rem;margin-top:2px}
+.dot{width:16px;height:16px;border-radius:50%;flex:none;background:#7d8f9b}
+.dot.LOW{background:var(--low)}.dot.MEDIUM{background:var(--med)}.dot.HIGH{background:var(--high)}
+
+.bus{background:var(--card);border-radius:16px;padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;width:100%;border:1px solid var(--line)}
+.bus.live{border:2px solid var(--accent)}
+.num{background:var(--brand);color:#fff;font-weight:800;border-radius:10px;padding:10px 8px;min-width:58px;text-align:center;font-size:1.05rem}
+.bus .dest{font-weight:650;font-size:.98rem}
+.bus .sub{color:var(--muted);font-size:.8rem;margin-top:2px}
+.eta{text-align:right}.eta b{font-size:1.25rem;display:block;line-height:1}.eta span{font-size:.72rem;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;padding:3px 9px;border-radius:99px;margin-top:6px}
+.pill i{width:8px;height:8px;border-radius:50%;background:currentColor}
+.LOW{color:var(--low);background:var(--low-bg)}.MEDIUM{color:var(--med);background:var(--med-bg)}.HIGH{color:var(--high);background:var(--high-bg)}
+.OFFLINE{color:var(--muted);background:var(--line)}
+.tag{background:var(--accent);color:#3b2a00;font-size:.68rem;font-weight:800;border-radius:6px;padding:2px 6px;margin-left:6px;vertical-align:middle}
+
+.view{display:none}.view.on{display:block}
+.back{display:flex;align-items:center;gap:6px;padding:16px 16px 4px;font-weight:600;color:var(--brand)}
+@media (prefers-color-scheme: dark){.back{color:var(--accent)}}
+.panel{background:var(--card);margin:10px 16px;border-radius:18px;padding:16px;border:1px solid var(--line)}
+.head{display:flex;gap:12px;align-items:center}
+.head .t{font-weight:700;font-size:1.05rem}.head .s{color:var(--muted);font-size:.82rem}
+.cap{color:var(--muted);font-size:.82rem}
+
+.level{font-size:2.4rem;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:2px}
+.level.LOW{color:var(--low);background:none}.level.MEDIUM{color:var(--med);background:none}.level.HIGH{color:var(--high);background:none}.level.OFFLINE{color:var(--muted);background:none}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0 6px}
+.steps span{height:12px;border-radius:6px;background:var(--line)}
+.steps.LOW span:nth-child(-n+1){background:var(--low)}
+.steps.MEDIUM span:nth-child(-n+2){background:var(--med)}
+.steps.HIGH span{background:var(--high)}
+.steplabels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:.74rem;color:var(--muted);text-align:center}
+.advice{margin-top:14px;padding:10px 12px;border-radius:12px;font-size:.88rem;font-weight:600}
+.meta{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-top:12px}
+
+.strip{display:flex;gap:3px;height:34px;align-items:stretch}
+.strip span{flex:1;min-width:3px;border-radius:3px}
+.strip .LOW{background:var(--low)}.strip .MEDIUM{background:var(--med)}.strip .HIGH{background:var(--high)}
+.scale{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:6px}
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.legend div{border-radius:12px;padding:10px;text-align:center;font-size:.78rem}
+.legend b{display:block;font-size:.9rem}
+
+.stops{list-style:none;margin-top:6px}
+.stops li{position:relative;padding:0 0 18px 30px;font-size:.92rem;display:flex;justify-content:space-between;gap:8px}
+.stops li::before{content:"";position:absolute;left:7px;top:6px;bottom:-12px;width:3px;background:var(--line)}
+.stops li:last-child::before{display:none}
+.stops li::after{content:"";position:absolute;left:2px;top:3px;width:13px;height:13px;border-radius:50%;background:var(--card);border:3px solid var(--muted)}
+.stops li.done{color:var(--muted)}.stops li.done::before{background:var(--brand)}.stops li.done::after{border-color:var(--brand);background:var(--brand)}
+.stops li.now::after{border-color:var(--accent);background:var(--brand);box-shadow:0 0 0 5px rgba(255,194,51,.35)}
+.stops li.now{font-weight:700}.stops small{color:var(--muted);font-weight:500}
+
+nav{position:fixed;bottom:0;width:100%;max-width:480px;background:var(--card);border-top:1px solid var(--line);display:flex;padding:8px 0 10px}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.72rem;color:var(--muted);padding:4px}
+nav button[aria-current=page]{color:var(--brand);font-weight:700}
+@media (prefers-color-scheme: dark){nav button[aria-current=page]{color:var(--accent)}}
+.empty{padding:24px 18px;text-align:center;color:var(--muted);font-size:.9rem}
+.note{font-size:.76rem;color:var(--muted);padding:10px 18px}
+@media (prefers-reduced-motion:no-preference){.steps span{transition:background .4s}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HOME -->
+  <section id="home" class="view on">
+    <header class="top">
+      <h1>Bus Crowd Tracker</h1>
+      <p>See how full your bus is before it arrives</p>
+    </header>
+    <label class="search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search route or stop" aria-label="Search route or stop">
+    </label>
+    <div class="chips" role="group" aria-label="Filter by crowd">
+      <button class="chip" data-f="ALL" aria-pressed="true">All buses</button>
+      <button class="chip" data-f="LOW" aria-pressed="false">Seats free</button>
+      <button class="chip" data-f="MEDIUM" aria-pressed="false">Filling up</button>
+      <button class="chip" data-f="HIGH" aria-pressed="false">Crowded</button>
+    </div>
+    <div class="hero">
+      <span class="dot" id="h-dot"></span>
+      <div><div class="l">Right now</div><div class="m" id="h-m">Looking for buses…</div></div>
+    </div>
+    <h2>Buses near you</h2>
+    <div class="list" id="list"></div>
+    <div id="rwrap"></div>
+    <p class="note">Each bus measures its own crowd level with an on-board camera. Search any Chennai route number to see if a bus is reporting.</p>
+  </section>
+
+  <!-- BUS DETAIL -->
+  <section id="detail" class="view">
+    <button class="back" id="back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>All buses</button>
+    <div class="panel">
+      <div class="head">
+        <div class="num" id="d-num"></div>
+        <div><div class="t" id="d-dest"></div><div class="s" id="d-via"></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="cap">Crowd level</div>
+      <div class="level OFFLINE" id="d-level">–</div>
+      <div class="steps" id="d-steps"><span></span><span></span><span></span></div>
+      <div class="steplabels"><span>Low</span><span>Medium</span><span>High</span></div>
+      <div class="advice OFFLINE" id="d-advice"></div>
+      <div class="meta"><span id="d-time"></span></div>
+    </div>
+    <div class="panel">
+      <div style="font-weight:700;margin-bottom:10px">Recent readings</div>
+      <div id="d-strip"></div>
+      <div class="legend">
+        <div class="LOW"><b>Low</b>Plenty of seats</div>
+        <div class="MEDIUM"><b>Medium</b>Seats full, some standing</div>
+        <div class="HIGH"><b>High</b>Packed</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LABEL  = {LOW:"Seats available", MEDIUM:"Filling up", HIGH:"Crowded", OFFLINE:"No reading"};
+const TITLE  = {LOW:"Low", MEDIUM:"Medium", HIGH:"High", OFFLINE:"No reading"};
+const ADVICE = {
+  LOW:"Plenty of room. You should find a seat.",
+  MEDIUM:"Seats are mostly taken. You may have to stand.",
+  HIGH:"Very crowded. Consider waiting for the next bus.",
+  OFFLINE:"This bus has not reported its crowd level recently."
+};
+const RANK = {LOW:0, MEDIUM:1, HIGH:2, OFFLINE:3};
+let buses = [], filter = "ALL", current = null, tick = 0, failed = false, rtimer = 0;
+const norm = l => (l==="LOW"||l==="MEDIUM"||l==="HIGH") ? l : "OFFLINE";
+const ago = a => a==null ? "–" : a<60 ? a+"s" : Math.round(a/60)+"m";
+
+function card(b){
+  const el = document.createElement("button");
+  el.className = "bus";
+  el.innerHTML =
+    `<div class="num">${esc(b.route)}</div>
+     <div><div class="dest">${esc(b.dest)}</div><div class="sub">Bus ${esc(b.id)}</div>
+       <span class="pill ${b.level}"><i></i>${LABEL[b.level]}</span></div>
+     <div class="eta"><b>${ago(b.age)}</b><span>ago</span></div>`;
+  el.onclick = () => openBus(b.id);
+  return el;
+}
+function renderList(){
+  const q = $("q").value.trim().toLowerCase().replace(/\s+/g,""), list = $("list");
+  list.innerHTML = "";
+  if(!buses.length){
+    list.innerHTML = '<div class="empty">'+(failed ? "Can’t reach the server. Check your connection." : "No buses are reporting yet.")+'</div>';
+    return;
+  }
+  const shown = buses.filter(b => (filter==="ALL"||b.level===filter) && (!q||(b.route+b.dest+b.id).toLowerCase().replace(/\s+/g,"").includes(q)));
+  if(!shown.length){ list.innerHTML = '<div class="empty">No reporting bus matches. Try a different route or filter.</div>'; return; }
+  shown.sort((a,b)=>RANK[a.level]-RANK[b.level] || a.route.localeCompare(b.route)).forEach(b => list.appendChild(card(b)));
+}
+function renderHero(){
+  const n = buses.filter(b=>b.level!=="OFFLINE").length, low = buses.filter(b=>b.level==="LOW").length;
+  $("h-dot").className = "dot " + (n===0 ? "" : low>0 ? "LOW" : "HIGH");
+  $("h-m").textContent = n===0 ? "No buses reporting" : low+" of "+n+" buses have seats free";
+}
+async function searchRoutes(){
+  const q = $("q").value.trim(), w = $("rwrap");
+  if(!q){ w.innerHTML = ""; return; }
+  try{
+    const r = await fetch("/api/routes?q="+encodeURIComponent(q),{cache:"no-store"});
+    const rs = await r.json();
+    w.innerHTML = !rs.length ? "" : '<h2>Chennai routes</h2><div class="list">'+rs.map(x =>
+      `<div class="bus"><div class="num">${esc(x.route)}</div>
+        <div><div class="dest">${esc(x.name)}</div>
+        <div class="sub">${x.live ? x.live+(x.live>1?" buses":" bus")+" reporting now" : "No bus reporting right now"}</div></div></div>`).join("")+'</div>';
+  }catch(e){ w.innerHTML = ""; }
+}
+function paintLevel(level){
+  const el = $("d-level"); el.className = "level "+level; el.textContent = TITLE[level];
+  $("d-steps").className = "steps "+(level==="OFFLINE"?"":level);
+  const a = $("d-advice"); a.className = "advice "+level; a.textContent = ADVICE[level];
+}
+function renderDetail(){
+  const b = buses.find(x=>x.id===current); if(!b) return;
+  $("d-num").textContent = b.route; $("d-dest").textContent = b.dest; $("d-via").textContent = "Bus "+b.id;
+  paintLevel(b.level);
+  $("d-time").textContent = b.time ? "Measured at "+b.time : "No reading yet";
+}
+async function loadHistory(id){
+  try{
+    const r = await fetch("/api/history/"+encodeURIComponent(id),{cache:"no-store"});
+    if(!r.ok) throw 0;
+    const h = await r.json();
+    if(id!==current) return;
+    $("d-strip").innerHTML = !h.length ? '<div class="empty">No readings yet.</div>' :
+      '<div class="strip" role="img" aria-label="Crowd level over recent readings">'+h.map(x=>`<span class="${norm(x.level)}" title="${esc(x.t)}"></span>`).join("")+'</div>'+
+      `<div class="scale"><span>${esc(h[0].t)}</span><span>${esc(h[h.length-1].t)}</span></div>`;
+  }catch(e){ $("d-strip").innerHTML = '<div class="empty">History unavailable.</div>'; }
+}
+function show(v){
+  ["home","detail"].forEach(x => $(x).classList.toggle("on", v===x));
+  window.scrollTo(0,0);
+}
+function openBus(id){ current = id; show("detail"); renderDetail(); $("d-strip").innerHTML = ""; loadHistory(id); }
+
+async function poll(){
+  try{
+    const r = await fetch("/api/buses",{cache:"no-store"});
+    if(!r.ok) throw 0;
+    buses = (await r.json()).map(b => ({...b, level: norm(b.level)}));
+    failed = false;
+  }catch(e){ failed = true; buses = buses.map(b => ({...b, level:"OFFLINE"})); }
+  renderList(); renderHero();
+  if(current){ renderDetail(); if(++tick%3===0) loadHistory(current); }
+}
+
+$("q").addEventListener("input", () => { renderList(); clearTimeout(rtimer); rtimer = setTimeout(searchRoutes, 250); });
+document.querySelectorAll(".chip").forEach(c => c.onclick = () => {
+  filter = c.dataset.f;
+  document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed", x===c));
+  renderList();
+});
+$("back").onclick = () => { current = null; show("home"); };
+
+poll(); setInterval(poll, 5000);
+</script>
+</body>
+</html>
