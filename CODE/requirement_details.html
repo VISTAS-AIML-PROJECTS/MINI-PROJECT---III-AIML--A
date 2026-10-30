@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ requirement.title }} - Smart Donation Connect</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f8f5;
+            color: #333;
+        }
+
+        .header {
+            background: #1b7f4c;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 750px;
+            margin: 35px auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #1b7f4c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        .icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 30px;
+            color: #1b7f4c;
+            margin-bottom: 10px;
+        }
+
+        .category {
+            display: inline-block;
+            background: #e5f5ec;
+            color: #1b7f4c;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            background: #e8f7ed;
+            color: #188044;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .info {
+            margin-top: 20px;
+        }
+
+        .info-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .label {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .description {
+            margin-top: 25px;
+        }
+
+        .description h2 {
+            color: #1b7f4c;
+        }
+
+        .description p {
+            line-height: 1.6;
+        }
+
+        .help-box {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f0faf4;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .help-box h2 {
+            color: #1b7f4c;
+            margin-top: 0;
+        }
+
+        .help-box p {
+            color: #555;
+        }
+
+        .help-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 14px 25px;
+            background: #1b7f4c;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .help-button:hover {
+            background: #14633b;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #dff5e7;
+            color: #176b3e;
+            font-weight: bold;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🤝 Smart Donation Connect</h1>
+    </div>
+
+    <div class="container">
+
+        <a href="{{ url_for('view_needs') }}" class="back">
+            ← Back to Requirements
+        </a>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="message">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <div class="card">
+
+            <div class="icon">
+                🍱
+            </div>
+
+            <div class="title">
+                {{ requirement.title }}
+            </div>
+
+            <div class="category">
+                {{ requirement.category }}
+            </div>
+
+            <div class="status">
+                {{ requirement.status }}
+            </div>
+
+
+            <div class="info">
+
+                <div class="info-item">
+
+                    <div class="label">
+                        Beneficiary
+                    </div>
+
+                    <div class="value">
+                        🏢 {{ requirement.beneficiary_type }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <div class="label">
+                        Location
+                    </div>
+
+                    <div class="value">
+                        📍 {{ requirement.location }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <div class="label">
+                        Quantity
+                    </div>
+
+                    <div class="value">
+                        {{ requirement.quantity }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <div class="label">
+                        Required Date
+                    </div>
+
+                    <div class="value">
+                        📅 {{ requirement.required_date }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="description">
+
+                <h2>
+                    Description
+                </h2>
+
+                <p>
+                    {{ requirement.description or "No description provided." }}
+                </p>
+
+            </div>
+
+
+            <div class="help-box">
+
+                <h2>
+                    ❤️ Want to help?
+                </h2>
+
+                <p>
+                    If you can fulfill this requirement,
+                    click the button below.
+                </p>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('help_requirement', requirement_id=requirement.id) }}"
+                >
+
+                    <button
+                        type="submit"
+                        class="help-button"
+                    >
+                        ❤️ I Want to Help
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        I Want to Help | Smart Donation Connect
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f0fff4,
+                    #ffffff
+                );
+
+            min-height: 100vh;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #198754;
+            color: white;
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            font-size: 32px;
+            color: #198754;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 8px 25px rgba(
+                    0,
+                    0,
+                    0,
+                    0.08
+                );
+        }
+
+        .donation-card {
+            border-left: 5px solid #198754;
+        }
+
+        .donation-card h2 {
+            color: #198754;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    1fr
+                );
+
+            gap: 18px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .info-label {
+            display: block;
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .form-title {
+            color: #198754;
+            margin-bottom: 8px;
+        }
+
+        .form-description {
+            color: #6b7280;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+
+            padding: 13px 15px;
+
+            border:
+                1px solid #d1d5db;
+
+            border-radius: 9px;
+
+            font-size: 15px;
+
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #198754;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    25,
+                    135,
+                    84,
+                    0.12
+                );
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+
+            border: none;
+
+            background: #198754;
+
+            color: white;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #157347;
+        }
+
+        .cancel-btn {
+            display: block;
+
+            text-align: center;
+
+            margin-top: 15px;
+
+            color: #198754;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+        .flash {
+            padding: 14px 18px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            text-align: center;
+        }
+
+        .flash-success {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .flash-error {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        footer {
+            text-align: center;
+
+            padding: 25px;
+
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+        @media (max-width: 650px) {
+
+            .header {
+                padding: 16px 18px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .container {
+                margin-top: 25px;
+            }
+
+            .page-title h1 {
+                font-size: 26px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+        ❤️ Smart Donation Connect
+    </div>
+
+    <a
+        href="{{ url_for('donation_details', donation_id=donation.id) }}"
+        class="back-link"
+    >
+        ← Back
+    </a>
+
+</header>
+
+
+<main class="container">
+
+
+    <div class="page-title">
+
+        <h1>
+            ❤️ I Want to Help
+        </h1>
+
+        <p>
+            Submit your interest in helping with this donation
+        </p>
+
+    </div>
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div
+                    class="flash
+                    {% if category == 'success' %}
+                        flash-success
+                    {% else %}
+                        flash-error
+                    {% endif %}"
+                >
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- ================================================= -->
+    <!-- DONATION INFORMATION -->
+    <!-- ================================================= -->
+
+    <div class="card donation-card">
+
+        <h2>
+            Donation Information
+        </h2>
+
+
+        <div class="info-grid">
+
+
+            <div class="info-item">
+
+                <span class="info-label">
+                    Donation
+                </span>
+
+                <span class="info-value">
+                    {{ donation.title }}
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="info-label">
+                    Category
+                </span>
+
+                <span class="info-value">
+                    {{ donation.category }}
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="info-label">
+                    Donor Type
+                </span>
+
+                <span class="info-value">
+                    {{ donation.donor_type }}
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="info-label">
+                    Quantity
+                </span>
+
+                <span class="info-value">
+                    {{ donation.quantity }}
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="info-label">
+                    Location
+                </span>
+
+                <span class="info-value">
+                    📍 {{ donation.location }}
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="info-label">
+                    Available Date
+                </span>
+
+                <span class="info-value">
+                    {{ donation.available_date }}
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- HELP FORM -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2 class="form-title">
+            Your Details
+        </h2>
+
+        <p class="form-description">
+            Please provide your contact details so the
+            donation can be coordinated with you.
+        </p>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('help_donation', donation_id=donation.id) }}"
+        >
+
+
+            <div class="form-group">
+
+                <label for="name">
+
+                    Full Name
+
+                    <span class="required">
+                        *
+                    </span>
+
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Enter your full name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="email">
+
+                    Email Address
+
+                    <span class="required">
+                        *
+                    </span>
+
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="phone">
+
+                    Phone Number
+
+                    <span class="required">
+                        *
+                    </span>
+
+                </label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="Enter your phone number"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="message">
+                    Message
+                </label>
+
+                <textarea
+                    id="message"
+                    name="message"
+                    placeholder="Tell us how you would like to help..."
+                ></textarea>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="submit-btn"
+            >
+
+                ❤️ Submit Help Request
+
+            </button>
+
+
+        </form>
+
+
+        <a
+            href="{{ url_for('donation_details', donation_id=donation.id) }}"
+            class="cancel-btn"
+        >
+            Cancel
+        </a>
+
+    </div>
+
+
+</main>
+
+
+<footer>
+
+    Smart Donation Connect © 2026
+
+    <br>
+
+    Connecting Donors with Verified Beneficiaries
+
+</footer>
+
+
+</body>
+
+</html>

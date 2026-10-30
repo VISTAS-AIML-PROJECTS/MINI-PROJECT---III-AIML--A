@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - Smart Donation Connect</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f8f6;
+            color: #26352d;
+        }
+
+        .navbar {
+            height: 70px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #198754;
+            text-decoration: none;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right a {
+            text-decoration: none;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .logout {
+            background: #198754;
+            color: white !important;
+            padding: 10px 18px;
+            border-radius: 8px;
+        }
+
+        .page {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #ffffff;
+            padding: 25px 15px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .sidebar h3 {
+            padding: 0 15px;
+            margin-bottom: 25px;
+            color: #198754;
+        }
+
+        .menu-item {
+            display: block;
+            text-decoration: none;
+            color: #444;
+            padding: 14px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #e9f7ef;
+            color: #198754;
+        }
+
+        .menu-item.active {
+            background: #198754;
+            color: white;
+        }
+
+        .main {
+            flex: 1;
+            padding: 35px;
+        }
+
+        .welcome {
+            background: linear-gradient(135deg, #198754, #32a96b);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .welcome h1 {
+            margin: 0 0 10px;
+            font-size: 30px;
+        }
+
+        .welcome p {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .flash-container {
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #e9f7ef;
+            color: #146c43;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .card h3 {
+            margin: 0 0 8px;
+        }
+
+        .card p {
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            background: #198754;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #146c43;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+        }
+
+        .view-all {
+            color: #198754;
+            text-decoration: none;
+        }
+
+        .item {
+            border: 1px solid #e5e5e5;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .item h3 {
+            margin: 0 0 8px;
+        }
+
+        .item p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .empty {
+            color: #777;
+            padding: 15px 0;
+        }
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 190px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .main {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .navbar {
+                padding: 0 15px;
+            }
+
+            .nav-right a:not(.logout) {
+                display: none;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                padding: 18px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="navbar">
+
+    <a href="{{ url_for('dashboard') }}"
+       class="logo">
+        ❤️ Smart Donation Connect
+    </a>
+
+    <div class="nav-right">
+
+        <a href="{{ url_for('profile') }}">
+            Profile
+        </a>
+
+        <a href="{{ url_for('notifications') }}">
+            🔔 Notifications
+        </a>
+
+        <a href="{{ url_for('logout') }}"
+           class="logout">
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     PAGE
+===================================================== -->
+
+<div class="page">
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+    <aside class="sidebar">
+
+        <h3>Dashboard</h3>
+
+        <a href="{{ url_for('dashboard') }}"
+           class="menu-item active">
+            🏠 Dashboard
+        </a>
+
+        <!-- FIXED: donate → post_donation -->
+
+        <a href="{{ url_for('post_donation') }}"
+           class="menu-item">
+            🎁 Donate
+        </a>
+
+        <a href="{{ url_for('post_donation') }}"
+           class="menu-item">
+            ➕ Post Donation
+        </a>
+
+        <a href="{{ url_for('view_needs') }}"
+           class="menu-item">
+            ❤️ Requirements
+        </a>
+
+        <a href="{{ url_for('matches') }}"
+           class="menu-item">
+            🤝 Matches
+        </a>
+
+        <a href="{{ url_for('notifications') }}"
+           class="menu-item">
+            🔔 Notifications
+        </a>
+
+        <a href="{{ url_for('profile') }}"
+           class="menu-item">
+            👤 Profile
+        </a>
+
+        <a href="{{ url_for('settings') }}"
+           class="menu-item">
+            ⚙️ Settings
+        </a>
+
+    </aside>
+
+
+    <!-- =================================================
+         MAIN CONTENT
+    ================================================== -->
+
+    <main class="main">
+
+        <!-- Welcome -->
+
+        <div class="welcome">
+
+            <h1>
+                Welcome
+                {{ session.get('user_name', 'User') }} ❤️
+            </h1>
+
+            <p>
+                Thank you for being part of Smart Donation Connect.
+                Together, we can connect donations with people who need them.
+            </p>
+
+        </div>
+
+
+        <!-- Flash Messages -->
+
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+
+            {% if messages %}
+
+                <div class="flash-container">
+
+                    {% for category, message in messages %}
+
+                        <div class="flash">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- =================================================
+             QUICK ACTION CARDS
+        ================================================== -->
+
+        <div class="cards">
+
+            <!-- Donate -->
+
+            <div class="card">
+
+                <div class="card-icon">
+                    🎁
+                </div>
+
+                <h3>Donate</h3>
+
+                <p>
+                    Share food, clothes, electronics, books,
+                    money or other useful items.
+                </p>
+
+                <a href="{{ url_for('post_donation') }}"
+                   class="btn">
+                    Post Donation
+                </a>
+
+            </div>
+
+
+            <!-- Requirements -->
+
+            <div class="card">
+
+                <div class="card-icon">
+                    ❤️
+                </div>
+
+                <h3>Requirements</h3>
+
+                <p>
+                    View current requirements from verified
+                    beneficiaries.
+                </p>
+
+                <a href="{{ url_for('view_needs') }}"
+                   class="btn">
+                    View Needs
+                </a>
+
+            </div>
+
+
+            <!-- Matches -->
+
+            <div class="card">
+
+                <div class="card-icon">
+                    🤝
+                </div>
+
+                <h3>Matches</h3>
+
+                <p>
+                    View donation and beneficiary matches.
+                </p>
+
+                <a href="{{ url_for('matches') }}"
+                   class="btn">
+                    View Matches
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RECENT DONATIONS
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Recent Donations
+                </h2>
+
+                <a href="{{ url_for('donations') }}"
+                   class="view-all">
+                    View All
+                </a>
+
+            </div>
+
+
+            {% if donations %}
+
+                {% for donation in donations[:5] %}
+
+                    <div class="item">
+
+                        <h3>
+                            {{ donation.title }}
+                        </h3>
+
+                        <p>
+                            <strong>Category:</strong>
+                            {{ donation.category }}
+                        </p>
+
+                        {% if donation.quantity %}
+
+                            <p>
+                                <strong>Quantity:</strong>
+                                {{ donation.quantity }}
+                            </p>
+
+                        {% endif %}
+
+                        {% if donation.location %}
+
+                            <p>
+                                📍 {{ donation.location }}
+                            </p>
+
+                        {% endif %}
+
+                        <br>
+
+                        <a href="{{ url_for(
+                            'donation_details',
+                            donation_id=donation.id
+                        ) }}"
+                           class="btn">
+                            View Details
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="empty">
+                    No donations have been posted yet.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             ACTIVE REQUIREMENTS
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Active Requirements
+                </h2>
+
+                <a href="{{ url_for('view_needs') }}"
+                   class="view-all">
+                    View All
+                </a>
+
+            </div>
+
+
+            {% if requirements %}
+
+                {% for requirement in requirements[:5] %}
+
+                    <div class="item">
+
+                        <h3>
+                            {{ requirement.title }}
+                        </h3>
+
+                        <p>
+                            <strong>Category:</strong>
+                            {{ requirement.category }}
+                        </p>
+
+                        {% if requirement.quantity %}
+
+                            <p>
+                                <strong>Quantity:</strong>
+                                {{ requirement.quantity }}
+                            </p>
+
+                        {% endif %}
+
+                        {% if requirement.location %}
+
+                            <p>
+                                📍 {{ requirement.location }}
+                            </p>
+
+                        {% endif %}
+
+                        <br>
+
+                        <a href="{{ url_for(
+                            'requirement_details',
+                            requirement_id=requirement.id
+                        ) }}"
+                           class="btn">
+                            View Details
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="empty">
+                    No active requirements available.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             NOTIFICATIONS
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Notifications
+                </h2>
+
+                <a href="{{ url_for('notifications') }}"
+                   class="view-all">
+                    View All
+                </a>
+
+            </div>
+
+
+            {% if notifications %}
+
+                {% for notification in notifications[:5] %}
+
+                    <div class="item">
+
+                        <p>
+                            🔔 {{ notification.message }}
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="empty">
+                    You have no notifications yet.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+    // Automatically hide flash messages
+    // after a few seconds.
+
+    setTimeout(function() {
+
+        const messages =
+            document.querySelectorAll(".flash");
+
+        messages.forEach(function(message) {
+
+            message.style.transition =
+                "opacity 0.5s";
+
+            message.style.opacity = "0";
+
+            setTimeout(function() {
+
+                message.remove();
+
+            }, 500);
+
+        });
+
+    }, 5000);
+
+</script>
+
+</body>
+</html>

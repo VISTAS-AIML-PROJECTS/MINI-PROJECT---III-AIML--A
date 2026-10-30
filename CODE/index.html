@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#149447">
+
+    <meta name="description"
+          content="Smart Donation Connect connects donors with verified people and organizations in need.">
+
+    <title>Smart Donation Connect</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="manifest"
+          href="{{ url_for('static', filename='manifest.json') }}">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+
+    <div class="logo">
+        <div class="logo-heart">♡</div>
+
+        <div>
+            <strong>Smart Donation</strong>
+            <span>Connect</span>
+        </div>
+    </div>
+
+    <nav class="nav-links">
+
+        <a href="#home">Home</a>
+
+        <a href="#about">About</a>
+
+        <a href="#features">Features</a>
+
+        <a href="#how-it-works">How It Works</a>
+
+        <a href="#contact">Contact</a>
+
+        <a href="{{ url_for('login') }}"
+           class="login-link">
+            Login
+        </a>
+
+        <a href="{{ url_for('register') }}"
+           class="signup-btn">
+            Sign Up
+        </a>
+
+    </nav>
+
+    <button class="mobile-menu"
+            onclick="toggleMenu()">
+        ☰
+    </button>
+
+</header>
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <div class="hero-badge">
+            ♥ Together We Can Make a Difference
+        </div>
+
+        <h1>
+            Donate.
+            <span>Connect.</span>
+            <br>
+            Change Lives.
+        </h1>
+
+        <p>
+            Smart Donation Connect helps bridge the gap between
+            donors and people in need using intelligent matching,
+            verified profiles and real-time connections.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="{{ url_for('register') }}"
+               class="primary-btn">
+                Get Started
+                <span>→</span>
+            </a>
+
+            <a href="#about"
+               class="secondary-btn">
+                Learn More
+            </a>
+
+        </div>
+
+        <div class="hero-trust">
+
+            <div>
+                <strong>✓</strong>
+                Verified Users
+            </div>
+
+            <div>
+                <strong>✓</strong>
+                Smart Matching
+            </div>
+
+            <div>
+                <strong>✓</strong>
+                Real-time Updates
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-visual">
+
+        <div class="heart-circle">
+            ♥
+        </div>
+
+        <div class="floating-card card-one">
+            ❤️
+            <div>
+                <strong>Food Donation</strong>
+                <small>Helping families</small>
+            </div>
+        </div>
+
+        <div class="floating-card card-two">
+            👕
+            <div>
+                <strong>Clothing</strong>
+                <small>Give what you don't need</small>
+            </div>
+        </div>
+
+        <div class="floating-card card-three">
+            💻
+            <div>
+                <strong>Useful Items</strong>
+                <small>Give. Reuse. Impact.</small>
+            </div>
+        </div>
+
+        <div class="hero-message">
+            <strong>Small Actions.</strong>
+            <br>
+            <span>Big Impact.</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= STATS ================= -->
+
+<section class="stats">
+
+    <div class="stat-card">
+
+        <div class="stat-icon">♥</div>
+
+        <strong>1,250+</strong>
+
+        <span>Total Donations</span>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon">♙</div>
+
+        <strong>980+</strong>
+
+        <span>Verified Beneficiaries</span>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon">♧</div>
+
+        <strong>650+</strong>
+
+        <span>Active Donors</span>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon">✓</div>
+
+        <strong>95%</strong>
+
+        <span>Successful Matches</span>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ABOUT ================= -->
+
+<section class="section" id="about">
+
+    <div class="section-heading">
+
+        <span>ABOUT US</span>
+
+        <h2>Technology With a Purpose</h2>
+
+        <p>
+            Smart Donation Connect is designed to make giving easier,
+            smarter and more transparent.
+        </p>
+
+    </div>
+
+
+    <div class="about-grid">
+
+        <div class="about-card">
+
+            <div class="feature-icon">
+                🤝
+            </div>
+
+            <h3>Connect Donors</h3>
+
+            <p>
+                Individuals, businesses, restaurants and organizations
+                can share available resources with people who need them.
+            </p>
+
+        </div>
+
+
+        <div class="about-card">
+
+            <div class="feature-icon">
+                🛡️
+            </div>
+
+            <h3>Verified Profiles</h3>
+
+            <p>
+                Verification helps improve trust and ensures that
+                donations reach genuine beneficiaries.
+            </p>
+
+        </div>
+
+
+        <div class="about-card">
+
+            <div class="feature-icon">
+                🤖
+            </div>
+
+            <h3>AI-Powered Matching</h3>
+
+            <p>
+                Intelligent matching can consider category,
+                location, quantity and urgency.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FEATURES ================= -->
+
+<section class="section feature-section"
+         id="features">
+
+    <div class="section-heading">
+
+        <span>OUR FEATURES</span>
+
+        <h2>Everything You Need to Make an Impact</h2>
+
+    </div>
+
+
+    <div class="features-grid">
+
+        <div class="feature-box">
+
+            <div class="feature-icon">🍱</div>
+
+            <h3>Food Donation</h3>
+
+            <p>
+                Share surplus and usable food with verified
+                beneficiaries.
+            </p>
+
+        </div>
+
+
+        <div class="feature-box">
+
+            <div class="feature-icon">👕</div>
+
+            <h3>Clothing</h3>
+
+            <p>
+                Donate usable clothes to people and organizations
+                that need them.
+            </p>
+
+        </div>
+
+
+        <div class="feature-box">
+
+            <div class="feature-icon">💻</div>
+
+            <h3>Electronic Items</h3>
+
+            <p>
+                Give useful electronic devices a second life.
+            </p>
+
+        </div>
+
+
+        <div class="feature-box">
+
+            <div class="feature-icon">💰</div>
+
+            <h3>Financial Support</h3>
+
+            <p>
+                Support verified requirements through financial
+                assistance.
+            </p>
+
+        </div>
+
+
+        <div class="feature-box">
+
+            <div class="feature-icon">📍</div>
+
+            <h3>Location Matching</h3>
+
+            <p>
+                Find suitable donation opportunities based on
+                location.
+            </p>
+
+        </div>
+
+
+        <div class="feature-box">
+
+            <div class="feature-icon">🔔</div>
+
+            <h3>Real-time Notifications</h3>
+
+            <p>
+                Stay informed when a suitable donation or requirement
+                becomes available.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= HOW IT WORKS ================= -->
+
+<section class="section"
+         id="how-it-works">
+
+    <div class="section-heading">
+
+        <span>HOW IT WORKS</span>
+
+        <h2>Simple Steps. Meaningful Impact.</h2>
+
+    </div>
+
+
+    <div class="steps">
+
+        <div class="step">
+
+            <div class="step-number">
+                1
+            </div>
+
+            <h3>Register</h3>
+
+            <p>
+                Create your account and complete verification.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">
+                2
+            </div>
+
+            <h3>Post / Find</h3>
+
+            <p>
+                Post a donation or find a genuine requirement.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">
+                3
+            </div>
+
+            <h3>Match</h3>
+
+            <p>
+                Smart matching connects suitable donors and
+                beneficiaries.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">
+                4
+            </div>
+
+            <h3>Make an Impact</h3>
+
+            <p>
+                Complete the donation and help change a life.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CTA ================= -->
+
+<section class="cta">
+
+    <div>
+
+        <h2>
+            Be the reason someone smiles today.
+        </h2>
+
+        <p>
+            Your donation can make a real difference.
+        </p>
+
+    </div>
+
+    <a href="{{ url_for('register') }}"
+       class="cta-btn">
+        Start Donating →
+    </a>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer id="contact">
+
+    <div class="footer-logo">
+
+        <strong>♡ Smart Donation</strong>
+
+        <span>Connect</span>
+
+    </div>
+
+    <p>
+        © 2026 Smart Donation Connect.
+        All rights reserved.
+    </p>
+
+    <div class="footer-links">
+
+        <a href="#home">Home</a>
+
+        <a href="#about">About</a>
+
+        <a href="#features">Features</a>
+
+        <a href="{{ url_for('login') }}">Login</a>
+
+    </div>
+
+</footer>
+
+
+<script>
+
+function toggleMenu() {
+
+    const nav =
+        document.querySelector(".nav-links");
+
+    nav.classList.toggle("show");
+
+}
+
+</script>
+
+
+</body>
+</html>

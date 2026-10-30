@@ -1,0 +1,476 @@
+
+/* SMART DONATION CONNECT - REGISTER PAGE */
+
+.auth-page,
+.auth-page * {
+    box-sizing: border-box;
+}
+
+.auth-page {
+    margin: 0;
+    min-height: 100vh;
+    background: #f3f8f5;
+    color: #10394a;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+}
+
+.auth-page a {
+    text-decoration: none;
+}
+
+.register-layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    background: #ffffff;
+}
+
+/* LEFT PANEL */
+
+.brand-panel {
+    min-width: 0;
+    padding: 40px clamp(25px, 4vw, 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(150deg, #e8f8ed 0%, #d8f3e2 55%, #bce9cd 100%);
+}
+
+.brand-panel::before {
+    content: "";
+    position: absolute;
+    width: 360px;
+    height: 360px;
+    right: -190px;
+    top: 25%;
+    border-radius: 50%;
+    background: rgba(21, 155, 85, 0.07);
+}
+
+.brand-panel::after {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    left: -160px;
+    bottom: -90px;
+    border-radius: 50%;
+    background: rgba(21, 155, 85, 0.08);
+}
+
+.brand-logo-link {
+    display: block;
+    width: 100%;
+    max-width: 410px;
+    position: relative;
+    z-index: 1;
+}
+
+.brand-logo {
+    display: block;
+    width: 100%;
+    max-width: 410px;
+    height: auto;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+
+.brand-intro,
+.brand-benefits,
+.brand-tagline {
+    position: relative;
+    z-index: 1;
+}
+
+.brand-intro {
+    max-width: 480px;
+    margin: 35px 0;
+}
+
+.welcome-label,
+.form-eyebrow {
+    color: #138647;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.brand-intro h1 {
+    margin: 14px 0;
+    font-size: clamp(34px, 4vw, 51px);
+    line-height: 1.13;
+    letter-spacing: -1.5px;
+    color: #10394a;
+}
+
+.brand-intro h1 span {
+    color: #159b55;
+}
+
+.brand-intro p {
+    max-width: 430px;
+    margin: 0;
+    color: #526b61;
+    font-size: 15px;
+    line-height: 1.9;
+}
+
+.brand-benefits {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: #244e3d;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.benefit-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #159b55;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.brand-tagline {
+    margin: 0;
+    padding-top: 18px;
+    border-top: 1px solid rgba(21, 100, 61, 0.16);
+    color: #426b55;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* RIGHT PANEL */
+
+.form-panel {
+    min-width: 0;
+    min-height: 100vh;
+    padding: 35px clamp(20px, 4vw, 60px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #ffffff;
+}
+
+.register-card {
+    width: 100%;
+    max-width: 440px;
+    margin: auto 0;
+}
+
+.mobile-logo-link {
+    display: none;
+}
+
+.form-heading {
+    margin-bottom: 23px;
+}
+
+.form-eyebrow {
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.form-heading h2 {
+    margin: 0 0 6px;
+    color: #10394a;
+    font-size: clamp(28px, 3vw, 35px);
+    line-height: 1.25;
+    letter-spacing: -0.7px;
+}
+
+.form-heading p {
+    margin: 0;
+    color: #72847a;
+    font-size: 14px;
+}
+
+/* FORM FIELDS */
+
+.field-group {
+    margin-bottom: 14px;
+}
+
+.field-group > label {
+    display: block;
+    margin-bottom: 6px;
+    color: #244b3b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.field-group input,
+.field-group select {
+    display: block;
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 13px;
+    border: 1px solid #dbe7df;
+    border-radius: 8px;
+    outline: none;
+    background: #fbfdfb;
+    color: #183f31;
+    font-family: inherit;
+    font-size: 13px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field-group input::placeholder {
+    color: #9aa9a0;
+}
+
+.field-group input:focus,
+.field-group select:focus {
+    border-color: #159b55;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(21, 155, 85, 0.12);
+}
+
+.field-group select {
+    cursor: pointer;
+}
+
+/* PASSWORD */
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 68px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    padding: 5px 7px;
+    border-radius: 5px;
+    background: transparent;
+    color: #138647;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.toggle-password:hover {
+    background: #e7f7ec;
+}
+
+.field-hint {
+    display: block;
+    margin-top: 5px;
+    color: #849289;
+    font-size: 10px;
+}
+
+.error-text {
+    color: #c62828;
+}
+
+.success-text {
+    color: #138647;
+}
+
+/* TERMS */
+
+.terms-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 7px 0 18px;
+    color: #64776c;
+    font-size: 12px;
+    line-height: 1.6;
+    cursor: pointer;
+}
+
+.terms-row input {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    margin: 2px 0 0;
+    accent-color: #159b55;
+    cursor: pointer;
+}
+
+/* BUTTON */
+
+.register-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 49px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #159b55;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 7px 18px rgba(21, 155, 85, 0.2);
+    transition: background 0.2s, transform 0.2s;
+}
+
+.register-button:hover {
+    background: #0e8044;
+    transform: translateY(-1px);
+}
+
+/* LINKS */
+
+.login-prompt {
+    margin: 22px 0 0;
+    text-align: center;
+    color: #78877d;
+    font-size: 13px;
+}
+
+.login-prompt a {
+    margin-left: 4px;
+    color: #138647;
+    font-weight: 800;
+}
+
+.login-prompt a:hover,
+.back-home:hover {
+    text-decoration: underline;
+}
+
+.back-home {
+    display: block;
+    width: fit-content;
+    margin: 17px auto 0;
+    color: #5d7769;
+    font-size: 12px;
+}
+
+.form-footer {
+    margin: 24px 0 0;
+    text-align: center;
+    color: #9aa89f;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+
+/* FLASH MESSAGES */
+
+.flash-messages {
+    margin-bottom: 18px;
+}
+
+.flash-message {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-radius: 7px;
+    background: #e8f7ed;
+    color: #176b3b;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* TABLETS */
+
+@media (max-width: 900px) {
+    .register-layout {
+        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    }
+
+    .brand-panel {
+        padding: 30px 25px;
+    }
+
+    .brand-intro h1 {
+        font-size: 35px;
+    }
+
+    .brand-logo-link {
+        max-width: 330px;
+    }
+
+    .form-panel {
+        padding: 30px 25px;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+    .register-layout {
+        display: block;
+    }
+
+    .brand-panel {
+        display: none;
+    }
+
+    .form-panel {
+        display: block;
+        min-height: 100vh;
+        padding: 24px 19px 32px;
+    }
+
+    .register-card {
+        max-width: 460px;
+        margin: 0 auto;
+    }
+
+    .mobile-logo-link {
+        display: block;
+        width: 210px;
+        max-width: 75%;
+        margin: 0 auto 22px;
+    }
+
+    .mobile-logo {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+    }
+
+    .form-heading {
+        margin-bottom: 22px;
+    }
+
+    .form-heading h2 {
+        font-size: 29px;
+    }
+}
+
+@media (max-width: 380px) {
+    .form-panel {
+        padding: 20px 14px 28px;
+    }
+
+    .mobile-logo-link {
+        width: 180px;
+    }
+
+    .form-heading h2 {
+        font-size: 26px;
+    }
+}

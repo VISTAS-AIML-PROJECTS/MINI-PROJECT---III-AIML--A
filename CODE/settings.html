@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Settings - Smart Donation Connect</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f8f6;
+            color: #26352d;
+        }
+
+        .settings-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .settings-header {
+            background: linear-gradient(135deg, #198754, #32a96b);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .settings-header h1 {
+            margin: 0 0 8px;
+        }
+
+        .settings-header p {
+            margin: 0;
+        }
+
+        .settings-card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .settings-card h2 {
+            margin-top: 0;
+            color: #198754;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h3 {
+            margin: 0 0 5px;
+            font-size: 16px;
+        }
+
+        .setting-info p {
+            margin: 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .back-button {
+            display: inline-block;
+            text-decoration: none;
+            background: #198754;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: #146c43;
+        }
+
+        .toggle {
+            width: 48px;
+            height: 24px;
+            position: relative;
+        }
+
+        .toggle input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #ccc;
+            border-radius: 30px;
+        }
+
+        .slider:before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            top: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+
+        .toggle input:checked + .slider {
+            background: #198754;
+        }
+
+        .toggle input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="settings-container">
+
+    <a href="{{ url_for('dashboard') }}"
+       class="back-button">
+        ← Back to Dashboard
+    </a>
+
+    <div class="settings-header">
+
+        <h1>Settings ⚙️</h1>
+
+        <p>
+            Manage your Smart Donation Connect preferences.
+        </p>
+
+    </div>
+
+
+    <!-- ACCOUNT SETTINGS -->
+
+    <div class="settings-card">
+
+        <h2>Account Settings</h2>
+
+        <div class="setting-row">
+
+            <div class="setting-info">
+
+                <h3>Profile</h3>
+
+                <p>
+                    View and manage your profile information.
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('profile') }}"
+               class="back-button">
+                View
+            </a>
+
+        </div>
+
+
+        <div class="setting-row">
+
+            <div class="setting-info">
+
+                <h3>Notifications</h3>
+
+                <p>
+                    View your donation and matching notifications.
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('notifications') }}"
+               class="back-button">
+                View
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- NOTIFICATION SETTINGS -->
+
+    <div class="settings-card">
+
+        <h2>Notification Preferences</h2>
+
+        <div class="setting-row">
+
+            <div class="setting-info">
+
+                <h3>Donation Match Notifications</h3>
+
+                <p>
+                    Receive notifications when a donation matches a requirement.
+                </p>
+
+            </div>
+
+            <label class="toggle">
+
+                <input type="checkbox" checked>
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting-row">
+
+            <div class="setting-info">
+
+                <h3>New Requirement Notifications</h3>
+
+                <p>
+                    Receive updates about new requirements.
+                </p>
+
+            </div>
+
+            <label class="toggle">
+
+                <input type="checkbox" checked>
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <!-- PRIVACY -->
+
+    <div class="settings-card">
+
+        <h2>Privacy</h2>
+
+        <div class="setting-row">
+
+            <div class="setting-info">
+
+                <h3>Profile Visibility</h3>
+
+                <p>
+                    Control whether your basic profile information
+                    can be displayed to other users.
+                </p>
+
+            </div>
+
+            <label class="toggle">
+
+                <input type="checkbox" checked>
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOGOUT -->
+
+    <div class="settings-card">
+
+        <h2>Account</h2>
+
+        <div class="setting-row">
+
+            <div class="setting-info">
+
+                <h3>Logout</h3>
+
+                <p>
+                    Sign out of your Smart Donation Connect account.
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('logout') }}"
+               class="back-button">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

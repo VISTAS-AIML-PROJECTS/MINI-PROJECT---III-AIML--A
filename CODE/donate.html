@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Make a Donation - Smart Donation Connect</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7f6;
+            color: #263238;
+        }
+
+        .navbar {
+            background: white;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1b7f5a;
+        }
+
+        .back {
+            text-decoration: none;
+            color: #1b7f5a;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #777;
+        }
+
+        .form-card {
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1b7f5a;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .category {
+            border: 1px solid #ddd;
+            padding: 18px 10px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .category:hover {
+            border-color: #1b7f5a;
+            background: #f2faf6;
+        }
+
+        .category input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            background: #1b7f5a;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #146344;
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f2faf6;
+            border-radius: 8px;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #dff5e7;
+            color: #176b3e;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .error-message {
+            margin-bottom: 20px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #fde8e8;
+            color: #a33a3a;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        @media (max-width: 650px) {
+
+            .navbar {
+                padding: 0 18px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-card {
+                padding: 22px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <div class="navbar">
+
+        <div class="logo">
+            ❤️ Smart Donation Connect
+        </div>
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="back"
+        >
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- MAIN CONTAINER -->
+
+    <div class="container">
+
+
+        <!-- HEADER -->
+
+        <div class="header">
+
+            <h1>
+                🤝 Make a Donation
+            </h1>
+
+            <p>
+                Your contribution can make a real difference.
+            </p>
+
+        </div>
+
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    {% if category == "error" %}
+
+                        <div class="error-message">
+                            {{ message }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="message">
+                            {{ message }}
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- FORM CARD -->
+
+        <div class="form-card">
+
+
+            <!-- IMPORTANT:
+                 The form now submits to post_donation
+                 so Flask can save the donation.
+            -->
+
+            <form
+                action="{{ url_for('post_donation') }}"
+                method="POST"
+            >
+
+
+                <!-- DONATION CATEGORY -->
+
+                <div class="form-group">
+
+                    <label>
+                        Donation Category
+                    </label>
+
+
+                    <div class="category-grid">
+
+
+                        <label class="category">
+
+                            <input
+                                type="radio"
+                                name="category"
+                                value="Food"
+                                required
+                            >
+
+                            🍱 Food
+
+                        </label>
+
+
+                        <label class="category">
+
+                            <input
+                                type="radio"
+                                name="category"
+                                value="Money"
+                            >
+
+                            💰 Money
+
+                        </label>
+
+
+                        <label class="category">
+
+                            <input
+                                type="radio"
+                                name="category"
+                                value="Clothes"
+                            >
+
+                            👕 Clothes
+
+                        </label>
+
+
+                        <label class="category">
+
+                            <input
+                                type="radio"
+                                name="category"
+                                value="Electronics"
+                            >
+
+                            💻 Electronics
+
+                        </label>
+
+
+                        <label class="category">
+
+                            <input
+                                type="radio"
+                                name="category"
+                                value="Books"
+                            >
+
+                            📚 Books
+
+                        </label>
+
+
+                        <label class="category">
+
+                            <input
+                                type="radio"
+                                name="category"
+                                value="Other"
+                            >
+
+                            📦 Other
+
+                        </label>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- DONOR TYPE -->
+
+                <div class="form-group">
+
+                    <label for="donor_type">
+                        Donor Type
+                    </label>
+
+
+                    <select
+                        id="donor_type"
+                        name="donor_type"
+                        required
+                    >
+
+                        <option value="">
+                            Select donor type
+                        </option>
+
+                        <option value="Individual">
+                            Individual
+                        </option>
+
+                        <option value="Restaurant">
+                            Restaurant
+                        </option>
+
+                        <option value="Hotel">
+                            Hotel
+                        </option>
+
+                        <option value="Business">
+                            Business
+                        </option>
+
+                        <option value="Philanthropist">
+                            Philanthropist
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- QUANTITY -->
+
+                <div class="form-group">
+
+                    <label for="quantity">
+                        Quantity / Amount
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="quantity"
+                        name="quantity"
+                        placeholder="Example: 20 food packets / ₹5000 / 10 shirts"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Describe what you would like to donate..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <!-- LOCATION -->
+
+                <div class="form-group">
+
+                    <label for="location">
+                        Donation Location
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        placeholder="Enter city / area"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- AVAILABLE DATE -->
+
+                <div class="form-group">
+
+                    <label for="available_date">
+                        Available Date
+                    </label>
+
+
+                    <input
+                        type="date"
+                        id="available_date"
+                        name="available_date"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                >
+                    Submit Donation ❤️
+                </button>
+
+
+                <!-- VERIFICATION NOTE -->
+
+                <div class="note">
+
+                    🔐 <strong>Verification:</strong>
+
+                    Donations will be connected with verified
+                    beneficiaries through Smart Donation Connect.
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>
+

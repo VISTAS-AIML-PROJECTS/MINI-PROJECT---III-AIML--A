@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Donor Verification</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0 20px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Donor Verification</h1>
+
+    <form method="POST">
+
+        <label>Document Type</label>
+
+        <select name="document_type" required>
+
+            <option value="">Select Document</option>
+
+            <option value="Aadhaar">Aadhaar</option>
+
+            <option value="PAN">PAN</option>
+
+            <option value="Organization ID">
+                Organization ID
+            </option>
+
+            <option value="Other">
+                Other
+            </option>
+
+        </select>
+
+
+        <label>Document Number</label>
+
+        <input
+            type="text"
+            name="document_number"
+            placeholder="Enter document number"
+            required
+        >
+
+
+        <button type="submit">
+            Submit for Verification
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+
+</html>

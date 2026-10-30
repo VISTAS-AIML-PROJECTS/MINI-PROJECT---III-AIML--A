@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile - Smart Donation Connect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8f5;
+            color: #333;
+        }
+
+        .header {
+            background: #1b7f4b;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.15);
+            padding: 10px 16px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .profile-top {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            margin: auto;
+            border-radius: 50%;
+            background: #1b7f4b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .profile-top h2 {
+            margin-top: 15px;
+            color: #1b7f4b;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-top p {
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-box {
+            background: #f7faf8;
+            padding: 18px;
+            border-radius: 10px;
+            border-left: 4px solid #1b7f4b;
+            min-width: 0;
+        }
+
+        .info-box label {
+            display: block;
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 7px;
+        }
+
+        .info-box p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            overflow-wrap: anywhere;
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .dashboard-btn {
+            background: #1b7f4b;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #e8f5ed;
+            color: #1b7f4b;
+        }
+
+        .btn:hover {
+            opacity: 0.88;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #e8f5ed;
+            color: #17663c;
+        }
+
+        .message.error {
+            background: #fdecec;
+            color: #a12626;
+        }
+
+        @media (max-width: 650px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-card {
+                padding: 25px 18px;
+            }
+
+            .header {
+                padding: 18px;
+                flex-wrap: wrap;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>♡ Smart Donation Connect</h1>
+
+        <a href="{{ url_for('dashboard') }}" class="back-btn">
+            ← Dashboard
+        </a>
+    </header>
+
+    <main class="container">
+
+        <section class="profile-card">
+
+            <div class="profile-top">
+
+                <div class="avatar">
+                    {{ (user.name or 'U')[0]|upper }}
+                </div>
+
+                <h2>{{ user.name }}</h2>
+
+                <p>Smart Donation Connect Member</p>
+
+            </div>
+
+            <div class="messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        <div class="message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-box">
+                    <label>Full Name</label>
+                    <p>{{ user.name or 'Not provided' }}</p>
+                </div>
+
+                <div class="info-box">
+                    <label>Email Address</label>
+                    <p>{{ user.email or 'Not provided' }}</p>
+                </div>
+
+                <div class="info-box">
+                    <label>Account Type</label>
+                    <p>{{ (user.user_type or 'Member')|title }}</p>
+                </div>
+
+                <div class="info-box">
+                    <label>Phone Number</label>
+                    <p>{{ user.phone or 'Not provided' }}</p>
+                </div>
+
+                <div class="info-box">
+                    <label>Location</label>
+                    <p>{{ user.location or 'Not provided' }}</p>
+                </div>
+
+                <div class="info-box">
+                    <label>Member Since</label>
+                    <p>
+                        {% if user.created_at %}
+                            {{ user.created_at.strftime('%d %B %Y') }}
+                        {% else %}
+                            Not available
+                        {% endif %}
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="actions">
+
+                <a href="{{ url_for('dashboard') }}"
+                   class="btn dashboard-btn">
+                    ← Back to Dashboard
+                </a>
+
+                <a href="{{ url_for('logout') }}"
+                   class="btn logout-btn">
+                    Log Out
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

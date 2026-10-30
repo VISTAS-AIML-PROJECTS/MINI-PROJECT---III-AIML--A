@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Post Requirement - Smart Donation Connect</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1b7f4c;
+            color: white;
+            padding: 20px 40px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+        }
+
+        .header p {
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 35px auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #1b7f4c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            color: #1b7f4c;
+            margin-bottom: 8px;
+        }
+
+        .card .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d5d5d5;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1b7f4c;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #1b7f4c;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #14633b;
+        }
+
+        .btn-secondary {
+            background: #eeeeee;
+            color: #333;
+        }
+
+        .flash {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background: #ffe8e8;
+            color: #a00000;
+        }
+
+        @media (max-width: 650px) {
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="header">
+
+        <h1>Smart Donation Connect</h1>
+
+        <p>Post a Requirement</p>
+
+    </div>
+
+
+    <div class="container">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="back">
+            ← Back to Dashboard
+        </a>
+
+
+        <div class="card">
+
+            <h2>📋 Post a Donation Requirement</h2>
+
+            <p class="subtitle">
+                Tell donors what is currently needed.
+            </p>
+
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% if messages %}
+
+                    {% for category, message in messages %}
+
+                        <div class="flash">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <form method="POST"
+                  action="{{ url_for('post_requirement') }}">
+
+
+                <div class="form-group">
+
+                    <label for="title">
+                        Requirement Title *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Example: 20 Pack Food"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="form-group">
+
+                        <label for="category">
+                            Category *
+                        </label>
+
+                        <select
+                            id="category"
+                            name="category"
+                            required
+                        >
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            <option value="Food">
+                                Food
+                            </option>
+
+                            <option value="Clothes">
+                                Clothes
+                            </option>
+
+                            <option value="Electronics">
+                                Electronics
+                            </option>
+
+                            <option value="Books">
+                                Books
+                            </option>
+
+                            <option value="Money">
+                                Money
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="beneficiary_type">
+                            Beneficiary Type *
+                        </label>
+
+                        <select
+                            id="beneficiary_type"
+                            name="beneficiary_type"
+                            required
+                        >
+
+                            <option value="">
+                                Select Beneficiary
+                            </option>
+
+                            <option value="NGO">
+                                NGO
+                            </option>
+
+                            <option value="Orphanage">
+                                Orphanage
+                            </option>
+
+                            <option value="Old-age Home">
+                                Old-age Home
+                            </option>
+
+                            <option value="School">
+                                School
+                            </option>
+
+                            <option value="Family">
+                                Family
+                            </option>
+
+                            <option value="Individual">
+                                Individual
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="form-group">
+
+                        <label for="location">
+                            Location *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            placeholder="Example: Chennai"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="quantity">
+                            Quantity *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="quantity"
+                            name="quantity"
+                            placeholder="Example: 20 packs"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="form-group">
+
+                        <label for="required_date">
+                            Required Date *
+                        </label>
+
+                        <input
+                            type="date"
+                            id="required_date"
+                            name="required_date"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="status">
+                            Priority / Status
+                        </label>
+
+                        <select
+                            id="status"
+                            name="status"
+                        >
+
+                            <option value="Active Requirement">
+                                Normal
+                            </option>
+
+                            <option value="High Priority">
+                                High Priority
+                            </option>
+
+                            <option value="Urgent">
+                                Urgent
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Explain what is needed and why..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="buttons">
+
+                    <a
+                        href="{{ url_for('view_needs') }}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        📋 Post Requirement
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

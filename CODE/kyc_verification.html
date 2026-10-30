@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Identity Verification - Smart Donation Connect</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f8f6;
+            color: #26352d;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(
+                135deg,
+                #198754,
+                #32a96b
+            );
+
+            color: white;
+            padding: 30px;
+            border-radius: 18px 18px 0 0;
+        }
+
+        .header h1 {
+            margin: 0 0 10px;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.95;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 0 0 18px 18px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        }
+
+        .security {
+            background: #e9f7ef;
+            border: 1px solid #b7e4c7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            color: #146c43;
+        }
+
+        .section-title {
+            color: #146c43;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #198754;
+            box-shadow: 0 0 0 2px rgba(25,135,84,0.1);
+        }
+
+        .checkbox {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-top: 25px;
+        }
+
+        .checkbox input {
+            width: auto;
+            margin-top: 4px;
+        }
+
+        .btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: #198754;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #146c43;
+        }
+
+        .logout {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .logout:hover {
+            color: #198754;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #777;
+            margin-top: 8px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>🛡️ Identity Verification</h1>
+
+        <p>
+            Complete verification before accessing
+            Smart Donation Connect.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="security">
+
+            🔒 <strong>Your verification matters.</strong>
+
+            <br>
+
+            Verification helps us build trust between
+            donors and beneficiaries.
+
+        </div>
+
+
+        <form method="POST">
+
+
+            <!-- IDENTITY -->
+
+            <h2 class="section-title">
+                Identity Details
+            </h2>
+
+
+            <label>
+                Verification Document
+            </label>
+
+            <select name="document_type" required>
+
+                <option value="">
+                    Select document
+                </option>
+
+                <option value="PAN">
+                    PAN Card
+                </option>
+
+                <option value="Government ID">
+                    Government ID
+                </option>
+
+            </select>
+
+
+            <label>
+                PAN / Government ID Number
+            </label>
+
+            <input
+                type="text"
+                name="pan_number"
+                placeholder="Enter your document number"
+                required
+            >
+
+            <p class="note">
+                Enter the details exactly as shown on your document.
+            </p>
+
+
+            <!-- BANK -->
+
+            <h2 class="section-title">
+                Bank Details
+            </h2>
+
+
+            <label>
+                Account Holder Name
+            </label>
+
+            <input
+                type="text"
+                name="account_holder_name"
+                placeholder="Enter account holder name"
+                required
+            >
+
+
+            <label>
+                Bank Account Number
+            </label>
+
+            <input
+                type="text"
+                name="bank_account"
+                placeholder="Enter bank account number"
+                required
+            >
+
+
+            <label>
+                IFSC Code
+            </label>
+
+            <input
+                type="text"
+                name="ifsc_code"
+                placeholder="Example: SBIN0001234"
+                required
+            >
+
+
+            <!-- CONFIRMATION -->
+
+            <div class="checkbox">
+
+                <input
+                    type="checkbox"
+                    name="confirmation"
+                    required
+                >
+
+                <label>
+                    I confirm that the information provided
+                    belongs to me and is accurate.
+                </label>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn">
+
+                VERIFY & CONTINUE →
+
+            </button>
+
+        </form>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout">
+
+            Logout
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Requirements - Smart Donation Connect</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8f5;
+            color: #333;
+        }
+
+        /* HEADER */
+        .header {
+            background: #1b7f4b;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .dashboard-btn {
+            text-decoration: none;
+            color: white;
+            background: rgba(255,255,255,0.15);
+            padding: 10px 18px;
+            border-radius: 8px;
+        }
+
+        /* MAIN */
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            color: #1b7f4b;
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            color: #777;
+        }
+
+        /* FLASH MESSAGES */
+        .flash {
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #dff5e7;
+            color: #176b3d;
+        }
+
+        .error {
+            background: #ffe0e0;
+            color: #b00020;
+        }
+
+        .info {
+            background: #e0f0ff;
+            color: #145a8d;
+        }
+
+        /* POST REQUIREMENT FORM */
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 35px;
+        }
+
+        .form-card h2 {
+            color: #1b7f4b;
+            margin-bottom: 8px;
+        }
+
+        .form-card .subtitle {
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 7px;
+            color: #444;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d5d5d5;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1b7f4b;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            margin-top: 20px;
+            background: #1b7f4b;
+            color: white;
+            border: none;
+            padding: 13px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #14653b;
+        }
+
+        /* REQUIREMENTS */
+        .section-title {
+            color: #1b7f4b;
+            margin-bottom: 20px;
+        }
+
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 22px;
+        }
+
+        .requirement-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+        }
+
+        .category {
+            display: inline-block;
+            background: #e8f5ed;
+            color: #1b7f4b;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .requirement-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .description {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .details {
+            line-height: 1.8;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .details strong {
+            color: #333;
+        }
+
+        .view-btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 10px 18px;
+            background: #1b7f4b;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-weight: bold;
+        }
+
+        .view-btn:hover {
+            background: #14653b;
+        }
+
+        /* EMPTY */
+        .empty {
+            background: white;
+            padding: 45px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+        }
+
+        .empty h3 {
+            color: #1b7f4b;
+            margin-bottom: 10px;
+        }
+
+        .empty p {
+            color: #777;
+        }
+
+        /* MOBILE */
+        @media (max-width: 700px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .container {
+                margin-top: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <div class="logo">
+            ♡ Smart Donation Connect
+        </div>
+
+        <a href="{{ url_for('dashboard') }}" class="dashboard-btn">
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <div class="container">
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- PAGE TITLE -->
+
+        <div class="page-title">
+
+            <h1>❤️ Donation Requirements</h1>
+
+            <p>
+                Find people and organizations who need support.
+            </p>
+
+        </div>
+
+
+        <!-- POST REQUIREMENT FORM -->
+
+        <div class="form-card">
+
+            <h2>➕ Post a Requirement</h2>
+
+            <p class="subtitle">
+                Tell donors what support is needed.
+            </p>
+
+
+            <form action="{{ url_for('requirements') }}" method="POST">
+
+                <div class="form-grid">
+
+                    <!-- TITLE -->
+
+                    <div class="form-group">
+
+                        <label for="title">
+                            Requirement Title *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            placeholder="Example: Food Needed"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="form-group">
+
+                        <label for="category">
+                            Category *
+                        </label>
+
+                        <select id="category" name="category" required>
+
+                            <option value="">Select Category</option>
+
+                            <option value="Food">
+                                🍲 Food
+                            </option>
+
+                            <option value="Money">
+                                💰 Money
+                            </option>
+
+                            <option value="Clothes">
+                                👕 Clothes
+                            </option>
+
+                            <option value="Electronics">
+                                💻 Electronics
+                            </option>
+
+                            <option value="Books">
+                                📚 Books
+                            </option>
+
+                            <option value="Education">
+                                🎓 Education
+                            </option>
+
+                            <option value="Other">
+                                📦 Other Essential Items
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="form-group full">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            placeholder="Explain what is needed..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- QUANTITY -->
+
+                    <div class="form-group">
+
+                        <label for="quantity">
+                            Quantity
+                        </label>
+
+                        <input
+                            type="text"
+                            id="quantity"
+                            name="quantity"
+                            placeholder="Example: 10 meals"
+                        >
+
+                    </div>
+
+
+                    <!-- BENEFICIARY TYPE -->
+
+                    <div class="form-group">
+
+                        <label for="beneficiary_type">
+                            Beneficiary Type
+                        </label>
+
+                        <select
+                            id="beneficiary_type"
+                            name="beneficiary_type"
+                        >
+
+                            <option value="Individual">
+                                Individual in Need
+                            </option>
+
+                            <option value="Family">
+                                Family
+                            </option>
+
+                            <option value="NGO">
+                                NGO
+                            </option>
+
+                            <option value="Orphanage">
+                                Orphanage
+                            </option>
+
+                            <option value="Old-age home">
+                                Old-age Home
+                            </option>
+
+                            <option value="School">
+                                School
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- LOCATION -->
+
+                    <div class="form-group">
+
+                        <label for="location">
+                            Location
+                        </label>
+
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            placeholder="Example: Chennai"
+                        >
+
+                    </div>
+
+
+                    <!-- REQUIRED DATE -->
+
+                    <div class="form-group">
+
+                        <label for="required_date">
+                            Required Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="required_date"
+                            name="required_date"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button type="submit" class="submit-btn">
+                    ❤️ Post Requirement
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- ACTIVE REQUIREMENTS -->
+
+        <h2 class="section-title">
+            Active Requirements
+        </h2>
+
+
+        {% if requirements %}
+
+            <div class="requirements-grid">
+
+                {% for requirement in requirements %}
+
+                    <div class="requirement-card">
+
+                        <span class="category">
+                            {{ requirement.category }}
+                        </span>
+
+
+                        <h3>
+                            {{ requirement.title }}
+                        </h3>
+
+
+                        <p class="description">
+
+                            {% if requirement.description %}
+
+                                {{ requirement.description }}
+
+                            {% else %}
+
+                                No description provided.
+
+                            {% endif %}
+
+                        </p>
+
+
+                        <div class="details">
+
+                            <div>
+                                <strong>Quantity:</strong>
+
+                                {% if requirement.quantity %}
+                                    {{ requirement.quantity }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </div>
+
+
+                            <div>
+                                <strong>Beneficiary:</strong>
+
+                                {% if requirement.beneficiary_type %}
+                                    {{ requirement.beneficiary_type }}
+                                {% else %}
+                                    Individual
+                                {% endif %}
+                            </div>
+
+
+                            <div>
+                                <strong>Location:</strong>
+
+                                {% if requirement.location %}
+                                    {{ requirement.location }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </div>
+
+
+                            <div>
+                                <strong>Required Date:</strong>
+
+                                {% if requirement.required_date %}
+                                    {{ requirement.required_date }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </div>
+
+
+                            <div>
+                                <strong>Status:</strong>
+
+                                {{ requirement.status }}
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="{{ url_for('requirement_details', requirement_id=requirement.id) }}"
+                            class="view-btn"
+                        >
+                            View Details
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty">
+
+                <h3>No Requirements Yet</h3>
+
+                <p>
+                    There are currently no active donation requirements.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Donation - Smart Donation Connect</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4faf6;
+            color: #26352b;
+        }
+
+        .header {
+            background: #0b7a3b;
+            color: white;
+            padding: 20px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-size: 22px; font-weight: bold; }
+
+        .dashboard-link {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .intro h1 { color: #176b3a; margin-bottom: 8px; }
+        .intro p { color: #666; }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h2 { color: #176b3a; margin-top: 0; }
+
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #0b7a3b;
+        }
+
+        textarea { min-height: 120px; resize: vertical; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #0b7a3b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover { background: #095f2f; }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .success { background: #dff5e6; color: #176b3a; }
+        .error { background: #ffe3e3; color: #a40000; }
+
+        .info-box {
+            background: #eef9f1;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            color: #386047;
+        }
+
+        small { display: block; margin-top: 6px; color: #666; }
+
+        @media (max-width: 600px) {
+            .header { padding: 15px 20px; }
+            .card { padding: 20px; }
+            .logo { font-size: 18px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">❤️ Smart Donation Connect</div>
+        <a href="{{ url_for('dashboard') }}" class="dashboard-link">
+            ← Dashboard
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="intro">
+            <h1>Post a Donation</h1>
+            <p>Share your available resources with verified beneficiaries.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <h2>📦 Donation Information</h2>
+
+            <div class="info-box">
+                💚 <strong>Every donation matters.</strong><br>
+                Provide accurate information so the right beneficiary can be matched with your donation.
+            </div>
+
+            <form method="POST" action="{{ url_for('post_donation') }}">
+
+                <div class="form-group">
+                    <label for="title">Donation Title *</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Example: Fresh meal packets"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Donation Category *</label>
+                    <select name="category" id="category" required>
+                        <option value="">Select donation category</option>
+                        <option value="Food">🍱 Food</option>
+                        <option value="Money">💰 Money</option>
+                        <option value="Clothes">👕 Clothes</option>
+                        <option value="Electronics">💻 Electronics</option>
+                        <option value="Books">📚 Books</option>
+                        <option value="Education">🎓 Education</option>
+                        <option value="Other">🎁 Other essential items</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="donor_type">Donor Type *</label>
+                    <select name="donor_type" id="donor_type" required>
+                        <option value="">Select donor type</option>
+                        <option value="Individual">👤 Individual</option>
+                        <option value="Restaurant">🍽️ Restaurant</option>
+                        <option value="Hotel">🏨 Hotel</option>
+                        <option value="Business">🏢 Business</option>
+                        <option value="Philanthropist">❤️ Philanthropist</option>
+                    </select>
+                    <small>Your account type is stored automatically by the current Flask route.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantity / Amount *</label>
+                    <input
+                        type="text"
+                        name="quantity"
+                        id="quantity"
+                        placeholder="Example: 20 meal packets or ₹5000"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="required_date">Available Date *</label>
+                    <input
+                        type="date"
+                        name="required_date"
+                        id="required_date"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Donation Location *</label>
+                    <input
+                        type="text"
+                        name="location"
+                        id="location"
+                        placeholder="Example: Chengalpattu"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Donation Description</label>
+                    <textarea
+                        name="description"
+                        id="description"
+                        placeholder="Describe the donation, condition, quantity details, and expiry information."
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    ❤️ Submit Donation
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

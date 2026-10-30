@@ -1,0 +1,336 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#198754">
+    <title>Notifications - Smart Donation Connect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4faf6;
+            color: #222;
+        }
+
+        .navbar {
+            background: #198754;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .dashboard-link {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #198754;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .notification-card,
+        .no-notifications {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .notification-card {
+            border-left: 5px solid #198754;
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #198754;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .notification-icon {
+            font-size: 30px;
+        }
+
+        .message {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .detail-box {
+            background: #f4faf6;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .detail-title {
+            font-weight: bold;
+            color: #198754;
+            margin-bottom: 8px;
+        }
+
+        .detail-text {
+            color: #444;
+            line-height: 1.8;
+        }
+
+        .match-badge {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 15px;
+            background: #d1e7dd;
+            color: #146c43;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .no-notifications {
+            padding: 45px 25px;
+            text-align: center;
+        }
+
+        .no-notifications .icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .no-notifications h2 {
+            color: #198754;
+        }
+
+        .no-notifications p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 11px 20px;
+            background: #198754;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background: #146c43;
+        }
+
+        .footer {
+            text-align: center;
+            color: #777;
+            padding: 25px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                padding: 15px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .container {
+                width: 94%;
+                margin-top: 25px;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+            .notification-card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="logo">❤️ Smart Donation Connect</div>
+
+        <a href="{{ url_for('dashboard') }}" class="dashboard-link">
+            ← Dashboard
+        </a>
+    </div>
+
+    <main class="container">
+
+        <h1>🔔 Notifications</h1>
+
+        <p class="subtitle">
+            Stay updated about donation matches and your requirements.
+        </p>
+
+        {% if notifications %}
+
+            {% for notification in notifications %}
+
+                <div class="notification-card">
+
+                    <div class="notification-header">
+                        <span class="notification-icon">🔔</span>
+                        <span>Donation Match Notification</span>
+                    </div>
+
+                    <div class="message">
+                        A donation match notification is available for your account.
+                    </div>
+
+                    {% if notification.donation and notification.requirement %}
+
+                        <div class="details">
+
+                            <div class="detail-box">
+                                <div class="detail-title">🎁 Donation</div>
+
+                                <div class="detail-text">
+                                    <strong>
+                                        {{ notification.donation.title }}
+                                    </strong>
+                                    <br>
+
+                                    Category:
+                                    {{ notification.donation.category }}
+                                    <br>
+
+                                    Quantity:
+                                    {{ notification.donation.quantity }}
+                                    <br>
+
+                                    📍 {{ notification.donation.location }}
+                                    <br>
+
+                                    Available:
+                                    {{ notification.donation.available_date
+                                       if notification.donation.available_date is defined
+                                       else notification.donation.required_date
+                                       if notification.donation.required_date is defined
+                                       else "Not specified" }}
+                                </div>
+                            </div>
+
+                            <div class="detail-box">
+                                <div class="detail-title">🙏 Requirement</div>
+
+                                <div class="detail-text">
+                                    <strong>
+                                        {{ notification.requirement.title }}
+                                    </strong>
+                                    <br>
+
+                                    Category:
+                                    {{ notification.requirement.category }}
+                                    <br>
+
+                                    Quantity:
+                                    {{ notification.requirement.quantity }}
+                                    <br>
+
+                                    📍 {{ notification.requirement.location }}
+                                    <br>
+
+                                    Required:
+                                    {{ notification.requirement.required_date
+                                       if notification.requirement.required_date is defined
+                                       else "Not specified" }}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="match-badge">
+                            ✅ Potential Donation Match
+                        </div>
+
+                    {% else %}
+
+                        <p class="message">
+                            {{ notification.message
+                               if notification.message is defined
+                               else "A notification is available for your account." }}
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="no-notifications">
+                <div class="icon">🔔</div>
+
+                <h2>No New Notifications</h2>
+
+                <p>
+                    You don't have any donation match notifications right now.
+                    When notifications are connected to your donation matching
+                    system, updates can appear here.
+                </p>
+            </div>
+
+        {% endif %}
+
+        <a href="{{ url_for('dashboard') }}" class="back-button">
+            ← Back to Dashboard
+        </a>
+
+    </main>
+
+    <div class="footer">
+        ❤️ Smart Donation Connect — Connecting generosity with genuine needs.
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#e3f4e8">
+
+    <title>Login | Smart Donation Connect</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+            background: #f1f8f3;
+            color: #173d29;
+        }
+
+        a {
+            color: #168447;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1100px;
+            min-height: 700px;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(13, 85, 43, 0.12);
+        }
+
+        /* LEFT PANEL: PALE GREEN, MATCHING REGISTER PAGE */
+
+        .brand-panel {
+            background: linear-gradient(
+                180deg,
+                #e8f7ed 0%,
+                #dff2e5 50%,
+                #d3eddd 100%
+            );
+            color: #173d29;
+            padding: 45px 38px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .logo {
+            width: 165px;
+            height: 165px;
+            object-fit: contain;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 7px 22px rgba(20, 85, 45, 0.10);
+        }
+
+        .brand-name {
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.3;
+            color: #173d29;
+            margin-bottom: 12px;
+        }
+
+        .brand-tagline {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #557866;
+            margin-bottom: 30px;
+        }
+
+        .brand-heading {
+            font-size: 26px;
+            line-height: 1.4;
+            color: #173d29;
+            margin-bottom: 15px;
+        }
+
+        .brand-description {
+            max-width: 340px;
+            font-size: 14px;
+            line-height: 1.9;
+            color: #557866;
+        }
+
+        .benefits {
+            width: 100%;
+            max-width: 350px;
+            margin-top: 28px;
+            text-align: left;
+        }
+
+        .benefit {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #244b35;
+        }
+
+        .tick {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #20975b;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 900;
+        }
+
+        /* RIGHT PANEL: WHITE LOGIN FORM */
+
+        .form-panel {
+            padding: 55px 60px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #ffffff;
+        }
+
+        .welcome-label {
+            color: #168447;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            margin-bottom: 14px;
+        }
+
+        .form-panel h1 {
+            color: #173d29;
+            font-size: 36px;
+            margin-bottom: 14px;
+        }
+
+        .subtitle {
+            color: #617467;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        /* FLASH MESSAGES */
+
+        .flash-message {
+            padding: 13px 15px;
+            margin-bottom: 18px;
+            border-radius: 9px;
+            background: #fff0ef;
+            color: #a52a23;
+            border: 1px solid #f2c5c1;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .flash-message.success {
+            background: #e8f8ed;
+            color: #176c38;
+            border-color: #b9e5c6;
+        }
+
+        .flash-message.info {
+            background: #eaf4ff;
+            color: #205b94;
+            border-color: #c7def8;
+        }
+
+        /* EMAIL AND PASSWORD FIELDS */
+
+        .form-group {
+            margin-bottom: 21px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: #284b36;
+            margin-bottom: 10px;
+        }
+
+        .form-group input {
+            width: 100%;
+            height: 52px;
+            padding: 14px 16px;
+            border: 1.5px solid #cbded0;
+            border-radius: 11px;
+            background: #fbfefc;
+            color: #193b28;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s ease;
+        }
+
+        .form-group input::placeholder {
+            color: #94a69a;
+        }
+
+        .form-group input:focus {
+            border-color: #168447;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(22, 132, 71, 0.12);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 65px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #168447;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 7px;
+        }
+
+        /* REMEMBER ME AND FORGOT PASSWORD */
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 2px 0 26px;
+            font-size: 13px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #617467;
+            font-weight: 400;
+        }
+
+        .remember input {
+            width: 15px;
+            height: 15px;
+            accent-color: #168447;
+        }
+
+        /* GREEN LOGIN BUTTON */
+
+        .login-button {
+            width: 100%;
+            min-height: 53px;
+            border: none;
+            border-radius: 11px;
+            background: #168447;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 7px 16px rgba(22, 132, 71, 0.19);
+            transition: 0.2s ease;
+        }
+
+        .login-button:hover {
+            background: #096a34;
+            transform: translateY(-1px);
+        }
+
+        /* OR DIVIDER */
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 26px 0;
+            color: #8a9b90;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e0e9e2;
+        }
+
+        /* GOOGLE SIGN-IN */
+
+        .google-button {
+            width: 100%;
+            min-height: 51px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: 1.5px solid #d4e2d8;
+            border-radius: 11px;
+            background: #ffffff;
+            color: #334c3b;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .google-button:hover {
+            background: #f3faf5;
+            text-decoration: none;
+            border-color: #168447;
+        }
+
+        .google-letter {
+            font-size: 20px;
+            font-weight: 900;
+            color: #4285f4;
+        }
+
+        /* REGISTER AND HOME LINKS */
+
+        .register-link {
+            text-align: center;
+            margin-top: 26px;
+            color: #617467;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #5d7565;
+            font-size: 13px;
+        }
+
+        /* MOBILE RESPONSIVENESS */
+
+        @media (max-width: 760px) {
+            .login-page {
+                padding: 15px;
+            }
+
+            .login-container {
+                max-width: 480px;
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+
+            .brand-panel {
+                padding: 32px 24px;
+            }
+
+            .logo {
+                width: 115px;
+                height: 115px;
+                border-radius: 20px;
+            }
+
+            .brand-name {
+                font-size: 24px;
+            }
+
+            .brand-heading {
+                font-size: 22px;
+            }
+
+            .brand-description {
+                max-width: 350px;
+            }
+
+            .benefits {
+                margin-top: 20px;
+            }
+
+            .form-panel {
+                padding: 38px 25px;
+            }
+
+            .form-panel h1 {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .form-panel {
+                padding: 30px 18px;
+            }
+
+            .form-options {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <div class="login-container">
+
+            <!-- LEFT BRAND PANEL -->
+
+            <section class="brand-panel">
+
+                <img
+                    class="logo"
+                    src="{{ url_for('static', filename='images/logo.png') }}"
+                    alt="Smart Donation Connect Logo"
+                    onerror="this.style.display='none';"
+                >
+
+                <div class="brand-name">
+                    Smart Donation Connect
+                </div>
+
+                <p class="brand-tagline">
+                    Connecting kindness with those who need it.
+                </p>
+
+                <h2 class="brand-heading">
+                    Small acts. Big changes.
+                </h2>
+
+                <p class="brand-description">
+                    Every donation has the power to make a difference.
+                    Join our community and help create a world where
+                    useful resources reach the people who need them.
+                </p>
+
+                <div class="benefits">
+
+                    <div class="benefit">
+                        <span class="tick">✓</span>
+                        <span>Connect donors with people in need</span>
+                    </div>
+
+                    <div class="benefit">
+                        <span class="tick">✓</span>
+                        <span>Reduce waste and support sustainability</span>
+                    </div>
+
+                    <div class="benefit">
+                        <span class="tick">✓</span>
+                        <span>Help communities access essential resources</span>
+                    </div>
+
+                    <div class="benefit">
+                        <span class="tick">✓</span>
+                        <span>Make every donation count</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- RIGHT LOGIN PANEL -->
+
+            <section class="form-panel">
+
+                <p class="welcome-label">WELCOME BACK</p>
+
+                <h1>Welcome Back!</h1>
+
+                <p class="subtitle">
+                    Login to your account to continue making a difference.
+                </p>
+
+                <!-- DISPLAY FLASK MESSAGES -->
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {% if category == 'success' %}success{% elif category == 'info' %}info{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- LOGIN FORM -->
+
+                <form action="{{ url_for('login') }}" method="POST">
+
+                    <div class="form-group">
+
+                        <label for="email">Email Address</label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your registered email"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="password">Password</label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="toggle-password"
+                                id="togglePassword"
+                                aria-label="Show password"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-options">
+
+                        <label class="remember">
+                            <input type="checkbox" name="remember">
+                            <span>Remember me</span>
+                        </label>
+
+                        <a href="#" id="forgotPassword">
+                            Forgot password?
+                        </a>
+
+                    </div>
+
+                    <button type="submit" class="login-button">
+                        Login &rarr;
+                    </button>
+
+                </form>
+
+                <div class="divider">OR</div>
+
+                <!-- GOOGLE LOGIN -->
+
+                <a
+                    class="google-button"
+                    href="{{ url_for('google_login') }}"
+                >
+                    <span class="google-letter">G</span>
+                    Continue with Google
+                </a>
+
+                <p class="register-link">
+                    Don't have an account?
+                    <a href="{{ url_for('register') }}">Register now</a>
+                </p>
+
+                <a class="back-home" href="{{ url_for('index') }}">
+                    &larr; Back to Home
+                </a>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <script>
+        // Show or hide password
+
+        const passwordInput = document.getElementById("password");
+        const togglePassword = document.getElementById("togglePassword");
+
+        togglePassword.addEventListener("click", function () {
+            const isHidden = passwordInput.type === "password";
+
+            passwordInput.type = isHidden ? "text" : "password";
+            togglePassword.textContent = isHidden ? "Hide" : "Show";
+
+            togglePassword.setAttribute(
+                "aria-label",
+                isHidden ? "Hide password" : "Show password"
+            );
+        });
+
+        // Forgot password placeholder
+
+        document.getElementById("forgotPassword").addEventListener(
+            "click",
+            function (event) {
+                event.preventDefault();
+
+                alert(
+                    "Password reset is not configured yet. " +
+                    "Please contact the project administrator."
+                );
+            }
+        );
+    </script>
+
+</body>
+</html>
